@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>성향 테스트</title>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MQH98T3VXH"></script>
+<script>
+window.dataLayer=window.dataLayer||[];
+function gtag(){dataLayer.push(arguments)}
+gtag('js',new Date());
+gtag('config','G-MQH98T3VXH');
+</script>
 <style>
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&display=swap');
@@ -639,7 +646,7 @@ document.getElementById('midB').innerHTML=
   go('midresult');
 }
 
-function startDet(type){window._dt=type;phase='detail';curQ=0;if(type==='dom')curQs=QD;else if(type==='sub')curQs=QS;else curQs=QA;ans=Array(curQs.length).fill(50);picked=new Set();go('test');renderQ()}
+function startDet(type){gtag('event','detail_test_start',{event_category:'engagement'});window._dt=type;phase='detail';curQ=0;if(type==='dom')curQs=QD;else if(type==='sub')curQs=QS;else curQs=QA;ans=Array(curQs.length).fill(50);picked=new Set();go('test');renderQ()}
 
 /* ═══ SCORING ═══ */
 function computeScores(){
@@ -674,6 +681,7 @@ function showRes(){
     ha+=`<div class="ri" onclick="openM('${k}')"><div class="ri-n" style="color:var(--gray-400)">${c.e} ${c.n}<span class="ri-tg">미측정</span></div><div class="ri-sc ng">—</div><div class="ri-br"></div></div>`;
   });
   document.getElementById('allR').innerHTML=ha;go('result');
+  gtag('event','test_complete',{event_category:'engagement'});
 }
 
 function openM(k){const c=C[k];document.getElementById('mN').textContent=c.e+' '+c.n;document.getElementById('mB').textContent=c.d;document.getElementById('modal').classList.add('on');document.body.style.overflow='hidden'}
@@ -694,6 +702,7 @@ t+='\nhttps://tryme.im';
   }).catch(()=>alert('결과가 복사되었어요.'));
 }
 function shareR(){
+  gtag('event','share_result',{event_category:'engagement'});
   const p=window._pcts,sorted=Object.entries(p).filter(([,v])=>v!==null).sort((a,b)=>b[1]-a[1]);
   let t='✦ 나의 성향 테스트 결과\n\n';
   sorted.forEach(([k,v])=>{t+=`${C[k].e} ${C[k].n}: ${v>0?'+':''}${v}%\n`});
