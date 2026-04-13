@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>성향 테스트</title>
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --black:#111;--white:#fff;--gray-50:#fafafa;--gray-100:#f5f5f5;
+  --gray-200:#e8e8e8;--gray-300:#d4d4d4;--gray-400:#a3a3a3;
+  --gray-500:#737373;--gray-600:#525252;--gray-700:#404040;
+  --serif:'Noto Serif KR',Georgia,serif;
+  --sans:'Pretendard',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  --tr:all .25s cubic-bezier(.4,0,.2,1);
+}
+body{font-family:var(--sans);background:var(--white);color:var(--black);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;font-size:17px}
+.app{max-width:480px;margin:0 auto;min-height:100dvh;position:relative}
+.screen{display:none;min-height:100dvh}
+.screen.active{display:flex;flex-direction:column}
+
+#intro{justify-content:flex-end;padding:0 28px 36px;position:relative;overflow:hidden}
+.intro-bg{position:absolute;top:0;left:0;right:0;height:55%;background:var(--gray-50)}
+.intro-ed{position:relative;z-index:1;padding-top:30px}
+.intro-num{font-family:var(--serif);font-size:72px;font-weight:900;color:var(--gray-200);line-height:1;letter-spacing:-3px;margin-bottom:6px}
+.intro-title{font-family:var(--serif);font-size:28px;font-weight:700;line-height:1.35;letter-spacing:-.5px;margin-bottom:12px}
+.intro-line{width:40px;height:1.5px;background:var(--black);margin-bottom:20px}
+.intro-desc{font-size:17px;color:var(--gray-600);line-height:1.7;margin-bottom:8px}
+.intro-sub{font-size:15px;color:var(--gray-400);margin-bottom:28px}
+.intro-tags{display:flex;gap:20px;margin-bottom:28px}
+.intro-tag{text-align:center}
+.intro-tag-n{font-family:var(--serif);font-size:32px;font-weight:700}
+.intro-tag-l{font-size:14px;color:var(--gray-500);margin-top:2px;letter-spacing:.5px}
+
+.btn{width:100%;padding:17px 24px;border:1.5px solid var(--black);background:var(--black);color:var(--white);font-size:17px;font-weight:600;font-family:var(--sans);cursor:pointer;transition:var(--tr);letter-spacing:-.2px;text-align:center}
+.btn:active{opacity:.7}
+.btn:disabled{background:var(--gray-200);border-color:var(--gray-200);color:var(--gray-400);cursor:default}
+.btn:disabled:active{opacity:1}
+.btn-o{background:var(--white);color:var(--black)}
+.btn-o:active{background:var(--gray-50)}
+.btn-g{border:none;background:none;color:var(--gray-500);font-size:14px;font-weight:500;padding:12px 24px;text-decoration:underline;text-underline-offset:3px;width:100%;cursor:pointer}
+.btn-g:active{color:var(--black)}
+.btn-wrap{padding:20px 28px;padding-bottom:calc(20px + env(safe-area-inset-bottom));margin-top:auto}
+
+#setup{padding:0 28px;padding-top:calc(20px + env(safe-area-inset-top))}
+.s-label{font-family:var(--serif);font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gray-400);margin-bottom:12px}
+.s-title{font-family:var(--serif);font-size:27px;font-weight:700;line-height:1.4;letter-spacing:-.3px;margin-bottom:8px}
+.s-desc{font-size:16px;color:var(--gray-500);margin-bottom:40px}
+.field{margin-bottom:32px}
+.field-l{font-size:13px;font-weight:600;color:var(--gray-600);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.field-l::before{content:'';width:12px;height:1px;background:var(--gray-400)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips.nowrap{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.chips.nowrap::-webkit-scrollbar{display:none}
+.chip{padding:10px 20px;border:1px solid var(--gray-200);background:var(--white);font-size:14px;color:var(--gray-600);cursor:pointer;transition:var(--tr);font-family:var(--sans);white-space:nowrap;flex-shrink:0}
+.chip:active{transform:scale(.97)}
+.chip.on{border-color:var(--black);background:var(--black);color:var(--white);font-weight:600}
+
+#test{background:var(--gray-50)}
+.topbar{background:var(--white);padding:16px 28px 14px;position:sticky;top:0;z-index:100;border-bottom:1px solid var(--gray-100)}
+.topbar-r{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.topbar-back{background:none;border:none;font-size:13px;color:var(--gray-400);cursor:pointer;font-family:var(--sans);padding:2px 0}
+.topbar-cnt{font-family:var(--serif);font-size:13px;color:var(--gray-400);font-variant-numeric:tabular-nums}
+.pbar{height:2px;background:var(--gray-200)}
+.pbar-f{height:100%;background:var(--black);transition:width .4s cubic-bezier(.4,0,.2,1)}
+
+.q-area{flex:1;display:flex;flex-direction:column;justify-content:center;padding:40px 28px 20px}
+.q-card{animation:qIn .3s cubic-bezier(.4,0,.2,1)}
+@keyframes qIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.q-n{font-family:var(--serif);font-size:48px;font-weight:900;color:var(--gray-200);margin-bottom:16px}
+.q-t{font-size:19px;font-weight:500;line-height:1.65;letter-spacing:-.2px;word-break:keep-all}
+
+.dots-w{padding:0 20px;margin-top:36px}
+.dots-l{display:flex;justify-content:space-between;font-size:12px;color:var(--gray-400);margin-bottom:18px;padding:0 4px}
+.dots-r{display:flex;justify-content:space-between;align-items:center;position:relative;padding:0 4px}
+.dots-r::before{content:'';position:absolute;top:50%;left:24px;right:24px;height:1px;background:var(--gray-200);z-index:0}
+.dot{border-radius:50%;border:2px solid var(--gray-300);background:var(--white);cursor:pointer;position:relative;z-index:1;transition:all .15s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;justify-content:center;flex-shrink:0;-webkit-user-select:none;user-select:none}
+.dot:active{transform:scale(.88)}
+.dot[data-v="0"],.dot[data-v="6"]{width:48px;height:48px}
+.dot[data-v="1"],.dot[data-v="5"]{width:40px;height:40px}
+.dot[data-v="2"],.dot[data-v="4"]{width:34px;height:34px}
+.dot[data-v="3"]{width:28px;height:28px;border-style:dashed;border-color:var(--gray-300)}
+.dot.on{border-color:var(--black);background:var(--black);border-style:solid}
+.dot.on::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--white)}
+.dots-v{text-align:center;margin-top:16px;font-size:13px;color:var(--gray-500);font-weight:500;min-height:20px}
+
+.test-nav{padding:16px 28px;padding-bottom:calc(16px + env(safe-area-inset-bottom));display:flex;gap:8px;background:var(--white);border-top:1px solid var(--gray-100)}
+.test-nav .bp{flex:0 0 auto;padding:16px 18px;border:1px solid var(--gray-200);background:var(--white);font-size:14px;font-weight:500;font-family:var(--sans);cursor:pointer;color:var(--gray-600);transition:var(--tr)}
+.test-nav .bp:active{background:var(--gray-50)}
+.test-nav .bn{flex:1}
+
+#midresult{padding:0 28px;justify-content:center;text-align:center}
+.mid-i{font-family:var(--serif);font-size:80px;font-weight:900;color:var(--gray-200);margin-bottom:8px}
+.mid-t{font-family:var(--serif);font-size:25px;font-weight:700;line-height:1.5;letter-spacing:-.3px;margin-bottom:12px}
+.mid-d{font-size:17px;color:var(--gray-500);line-height:1.65;margin-bottom:48px;word-break:keep-all}
+.mid-dv{width:40px;height:1px;background:var(--gray-300);margin:0 auto 32px}
+.mid-s{font-size:13px;color:var(--gray-400);margin-bottom:20px;letter-spacing:.5px}
+.mid-b{display:flex;flex-direction:column;gap:10px;width:100%}
+
+#loading{justify-content:center;align-items:center;padding:40px 28px;text-align:center}
+.ld-r{width:48px;height:48px;border:2px solid var(--gray-200);border-top-color:var(--black);border-radius:50%;animation:sp .8s linear infinite;margin-bottom:32px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.ld-t{font-family:var(--serif);font-size:18px;font-weight:700;margin-bottom:6px}
+.ld-d{font-size:14px;color:var(--gray-400)}
+.ld-ss{margin-top:40px;text-align:left;width:100%;max-width:260px}
+.ld-s{display:flex;align-items:center;gap:12px;padding:10px 0;font-size:13px;color:var(--gray-400);transition:var(--tr)}
+.ld-s.dn{color:var(--black)}
+.ld-o{width:6px;height:6px;border-radius:50%;background:var(--gray-300);transition:var(--tr);flex-shrink:0}
+.ld-s.dn .ld-o{background:var(--black)}
+
+#result{background:var(--white);padding-bottom:env(safe-area-inset-bottom)}
+.rh{padding:48px 28px 40px;text-align:center;border-bottom:1px solid var(--gray-100)}
+.rh-l{font-family:var(--serif);font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gray-400);margin-bottom:16px}
+.rh-n{font-family:var(--serif);font-size:40px;font-weight:900;letter-spacing:-1px;margin-bottom:8px}
+.rh-s{font-size:17px;color:var(--gray-500);margin-bottom:24px}
+.rh-p{font-family:var(--serif);font-size:64px;font-weight:900;color:var(--gray-200);line-height:1}
+.rs{padding:32px 28px 0}
+.rs-h{display:flex;align-items:center;gap:8px;margin-bottom:20px}
+.rs-hl{flex:1;height:1px;background:var(--gray-200)}
+.rs-ht{font-family:var(--serif);font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--gray-400);white-space:nowrap}
+.tc{border-bottom:1px solid var(--gray-100);padding:24px 0;display:flex;align-items:flex-start;gap:16px;cursor:pointer;transition:var(--tr)}
+.tc:active{opacity:.6}
+.tc-r{font-family:var(--serif);font-size:32px;font-weight:900;color:var(--gray-200);line-height:1;min-width:36px}
+.tc-b{flex:1}
+.tc-n{font-size:16px;font-weight:700;margin-bottom:2px}
+.tc-tp{font-size:12px;color:var(--gray-400);margin-bottom:6px}
+.tc-d{font-size:13px;color:var(--gray-500);line-height:1.5}
+.tc-s{font-family:var(--serif);font-size:24px;font-weight:700;white-space:nowrap}
+.ri{display:flex;align-items:center;padding:14px 0;border-bottom:1px solid var(--gray-100);cursor:pointer;transition:var(--tr)}
+.ri:active{opacity:.6}
+.ri-n{flex:1;font-size:14px;font-weight:500;display:flex;align-items:center;gap:8px}
+.ri-tg{font-size:11px;padding:2px 8px;background:var(--gray-100);color:var(--gray-500);font-weight:500}
+.ri-sc{font-family:var(--serif);font-size:16px;font-weight:700;min-width:50px;text-align:right}
+.ri-sc.p{color:var(--black)}.ri-sc.ng{color:var(--gray-300)}
+.ri-br{width:60px;height:3px;background:var(--gray-100);margin-left:12px;position:relative;overflow:hidden}
+.ri-fl{height:100%;position:absolute;background:var(--black)}
+.ri-fl.ng{background:var(--gray-300)}
+.rn{margin:28px 28px 0;padding:20px;border:1px solid var(--gray-200);font-size:13px;color:var(--gray-500);line-height:1.6}
+.rn b{color:var(--gray-600);font-weight:600}
+.ra{padding:32px 28px;display:flex;flex-direction:column;gap:10px}
+.rdis{margin:20px 28px 0;font-size:12px;color:var(--gray-400);line-height:1.55;text-align:center}
+
+/* ── MODAL (공용) ── */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000}
+.mo.on{display:flex;align-items:flex-end;justify-content:center;animation:fi .2s}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+.ms{background:var(--white);max-width:480px;width:100%;max-height:75vh;overflow-y:auto;padding:24px 28px 40px;animation:su .3s cubic-bezier(.4,0,.2,1)}
+@keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.ms-bar{width:32px;height:3px;background:var(--gray-300);margin:0 auto 24px}
+.ms-n{font-family:var(--serif);font-size:22px;font-weight:700;margin-bottom:16px}
+.ms-b{font-size:15px;color:var(--gray-600);line-height:1.7}
+
+/* ── 성향 사전 풀스크린 ── */
+#glossary{background:var(--white);padding-bottom:env(safe-area-inset-bottom)}
+.gl-top{position:sticky;top:0;z-index:100;background:var(--white);padding:16px 28px 14px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between}
+.gl-top-title{font-family:var(--serif);font-size:15px;font-weight:700}
+.gl-top-close{background:none;border:none;font-size:14px;color:var(--gray-400);cursor:pointer;font-family:var(--sans);padding:4px 0}
+.gl-head{padding:32px 28px 24px}
+.gl-head h2{font-family:var(--serif);font-size:24px;font-weight:900;margin-bottom:6px}
+.gl-head p{font-size:14px;color:var(--gray-500)}
+.gl-tabs{display:flex;gap:0;padding:0 28px;border-bottom:1px solid var(--gray-100);position:sticky;top:52px;z-index:99;background:var(--white)}
+.gl-tab{padding:12px 16px;font-size:13px;font-weight:600;color:var(--gray-400);cursor:pointer;border-bottom:2px solid transparent;transition:var(--tr)}
+.gl-tab.on{color:var(--black);border-bottom-color:var(--black)}
+.gl-list{padding:8px 28px 32px}
+.gl-item{padding:20px 0;border-bottom:1px solid var(--gray-100);cursor:pointer;transition:var(--tr)}
+.gl-item:active{opacity:.6}
+.gl-item-top{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.gl-item-emoji{font-size:24px}
+.gl-item-name{font-size:16px;font-weight:700}
+.gl-item-tag{font-size:11px;padding:2px 8px;background:var(--gray-100);color:var(--gray-500);font-weight:500}
+.gl-item-short{font-size:13px;color:var(--gray-500);line-height:1.5}
+.gl-back-wrap{padding:20px 28px}
+.promo-banner{display:block;margin:28px 28px 0;padding:24px 20px;border:none;background:var(--black);text-decoration:none;color:var(--white);transition:var(--tr)}
+.promo-banner:active{opacity:.7}
+.promo-tag{display:inline-block;font-size:14px;font-weight:700;padding:4px 12px;background:#FF6422;color:var(--white);letter-spacing:.5px;margin-bottom:12px}
+.promo-title{font-family:var(--sans);font-size:20px;font-weight:700;margin-bottom:6px;letter-spacing:-.3px;color:var(--white)}
+.promo-desc{font-size:16px;color:rgba(255,255,255,.8);margin-bottom:16px}
+.promo-cta{font-size:16px;font-weight:600;color:var(--white);letter-spacing:-.2px;text-decoration:underline;text-underline-offset:4px;margin-top:8px}
+
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ===== INTRO ===== -->
+<div id="intro" class="screen active">
+<div class="intro-bg"></div>
+<div class="intro-ed">
+<div class="intro-num">BDSM</div>
+<h1 class="intro-title">나의 숨겨진<br>성향 찾기</h1>
+<div class="intro-line"></div>
+<p class="intro-desc">솔직한 답변 하나하나가 모여<br>당신만의 성향 리포트가 만들어져요.</p>
+<p class="intro-sub">약 5분~10분 소요 · 결과는 어디에도 저장되지 않아요</p>
+<div class="intro-tags">
+<div class="intro-tag"><div class="intro-tag-n">22가지</div><div class="intro-tag-l">성향 분석</div></div>
+<div class="intro-tag"><div class="intro-tag-n">100%</div><div class="intro-tag-l">익명 보장</div></div>
+</div>
+<button class="btn" onclick="go('setup')">테스트 시작하기 →</button>
+<button class="btn btn-o" onclick="openGlossary()" style="margin-top:12px">22가지 성향 미리 보기</button>
+<div style="margin-top:20px;text-align:center">
+<span style="font-size:13px;color:var(--gray-400);letter-spacing:.5px">made by</span><br>
+<a href="https://tryme.im" target="_blank" rel="noopener" style="font-size:15px;color:var(--gray-500);font-weight:600;text-decoration:none;letter-spacing:-.2px">섹슈얼웰니스 매거진 '트라이미'</a>
+</div>
+</div>
+</div>
+
+
+<!-- ===== GLOSSARY ===== -->
+<div id="glossary" class="screen">
+<div class="gl-top">
+<span class="gl-top-title">성향 사전</span>
+<button class="gl-top-close" onclick="go(glFrom)">닫기</button>
+</div>
+<div class="gl-head">
+<h2>22가지 성향</h2>
+<p>테스트에서 분석하는 모든 성향이에요</p>
+</div>
+<div class="gl-tabs" id="glTabs">
+<div class="gl-tab on" onclick="filterGl('all',this)">전체</div>
+<div class="gl-tab" onclick="filterGl('dom',this)">지배 계열</div>
+<div class="gl-tab" onclick="filterGl('sub',this)">복종 계열</div>
+<div class="gl-tab" onclick="filterGl('etc',this)">기타</div>
+</div>
+<div class="gl-list" id="glList"></div>
+<div class="gl-back-wrap">
+<button class="btn" onclick="go('setup')">테스트 시작하기</button>
+<button class="btn-g" onclick="go(glFrom)" style="margin-top:4px">← 돌아가기</button>
+</div>
+</div>
+
+<!-- ===== SETUP ===== -->
+<div id="setup" class="screen">
+<div style="padding-top:40px">
+<div class="s-label">STEP 0</div>
+<h2 class="s-title">기본 정보를<br>알려주세요</h2>
+<p class="s-desc">결과 분석에 참고돼요. 저장되지 않아요.</p>
+</div>
+<div class="field"><div class="field-l">성별</div>
+<div class="chips" data-f="gender">
+<div class="chip" data-v="male">남성</div><div class="chip" data-v="female">여성</div><div class="chip" data-v="other">기타</div>
+</div></div>
+<div class="field"><div class="field-l">연령대</div>
+<div class="chips nowrap" data-f="age">
+<div class="chip" data-v="10s">10대</div><div class="chip" data-v="20s">20대</div><div class="chip" data-v="30s">30대</div><div class="chip" data-v="40+">40대 이상</div>
+</div></div>
+<div class="field"><div class="field-l">성적 지향</div>
+<div class="chips" data-f="orient">
+<div class="chip" data-v="hetero">이성애</div><div class="chip" data-v="homo">동성애</div><div class="chip" data-v="bi">양성애</div><div class="chip" data-v="other">기타</div>
+</div></div>
+<div class="btn-wrap"><button class="btn" id="btnSetup" disabled onclick="startScreening()">다음으로</button></div>
+</div>
+
+<!-- ===== TEST ===== -->
+<div id="test" class="screen">
+<div class="topbar">
+<div class="topbar-r">
+<button class="topbar-back" onclick="prevQ()">← 이전</button>
+<span class="topbar-cnt" id="cnt"></span>
+</div>
+<div class="pbar"><div class="pbar-f" id="pbar"></div></div>
+</div>
+<div class="q-area">
+<div class="q-card" id="qcard">
+<div class="q-n" id="qnum"></div>
+<p class="q-t" id="qtxt"></p>
+</div>
+<div class="dots-w">
+<div class="dots-l"><span>전혀 아니에요</span><span>잘 모르겠어요</span><span>매우 그래요</span></div>
+<div class="dots-r" id="dotsRow">
+<div class="dot" data-v="0" onclick="pick(0)"></div>
+<div class="dot" data-v="1" onclick="pick(1)"></div>
+<div class="dot" data-v="2" onclick="pick(2)"></div>
+<div class="dot" data-v="3" onclick="pick(3)"></div>
+<div class="dot" data-v="4" onclick="pick(4)"></div>
+<div class="dot" data-v="5" onclick="pick(5)"></div>
+<div class="dot" data-v="6" onclick="pick(6)"></div>
+</div>
+<div class="dots-v" id="dotVal"></div>
+</div>
+</div>
+<div class="test-nav">
+<button class="bp" onclick="prevQ()">이전</button>
+<button class="btn bn" id="btnN" onclick="nextQ()">다음</button>
+</div>
+</div>
+
+<!-- ===== MID RESULT ===== -->
+<div id="midresult" class="screen">
+<div>
+<div class="mid-i" id="midI"></div>
+<h2 class="mid-t" id="midT"></h2>
+<p class="mid-d" id="midD"></p>
+<div class="mid-dv"></div>
+<p class="mid-s">더 자세한 성향을 알아볼 수 있어요</p>
+<div class="mid-b" id="midB"></div>
+</div>
+</div>
+
+<!-- ===== LOADING ===== -->
+<div id="loading" class="screen">
+<div class="ld-r"></div>
+<h2 class="ld-t">결과를 분석하고 있어요</h2>
+<p class="ld-d">잠시만 기다려 주세요</p>
+<div class="ld-ss">
+<div class="ld-s" id="l1"><div class="ld-o"></div><span>응답 데이터 수집</span></div>
+<div class="ld-s" id="l2"><div class="ld-o"></div><span>성향 점수 계산</span></div>
+<div class="ld-s" id="l3"><div class="ld-o"></div><span>맞춤 리포트 생성</span></div>
+</div>
+</div>
+
+<!-- ===== RESULT ===== -->
+<div id="result" class="screen">
+<div class="rh">
+<div class="rh-l" id="rl"></div>
+<h1 class="rh-n" id="rn"></h1>
+<p class="rh-s" id="rs2"></p>
+<div class="rh-p" id="rp"></div>
+</div>
+<div class="rs"><div class="rs-h"><span class="rs-ht">TOP 3</span><div class="rs-hl"></div></div><div id="top3"></div></div>
+<div class="rn">
+  <b>💡 결과표 읽는 법</b><br>
+  +(플러스) 수치가 높을수록 내게 강한 성향이에요.<br>
+  -(마이너스) 수치라면 나와는 거리가 먼 성향이에요.<br>
+  사람의 성향은 한 가지만 있는 게 아니에요! 여러 항목에서 동시에 +/- 수치가 높게 나올 수 있어요.<br><br>
+  👉 <b>각 성향을 누르면 자세한 설명이 나옵니다.</b>
+</div>
+<div class="rs"><div class="rs-h"><span class="rs-ht">ALL RESULTS</span><div class="rs-hl"></div></div><div id="allR"></div></div>
+<div class="rdis">이 테스트는 자기 이해를 위한 참고 자료예요.<br>전문적인 심리 진단이 아니며, 모든 응답은 브라우저에서만 처리돼요.</div>
+
+<a href="https://tryme.im" target="_blank" rel="noopener" class="promo-banner">
+<div class="promo-tag">첫 달 무료</div>
+<div class="promo-title">섹슈얼 웰니스 매거진 '트라이미'</div>
+<div class="promo-desc">나의 성향을 더 깊이 탐구하고 싶다면</div>
+<div class="promo-cta">바로가기 →</div>
+</a>
+
+
+<div class="ra">
+<button class="btn btn-o" onclick="shareR()">결과 공유하기</button>
+<button class="btn-g" onclick="location.reload()">다시 테스트하기</button>
+</div>
+</div>
+
+<!-- ===== MODAL (상세 설명) ===== -->
+<div class="mo" id="modal" onclick="if(event.target===this)closeM()">
+<div class="ms"><div class="ms-bar"></div>
+<h3 class="ms-n" id="mN"></h3>
+<div class="ms-b" id="mB"></div>
+<div style="margin-top:24px"><button class="btn" onclick="closeM()">확인</button></div>
+</div>
+</div>
+
+</div>
+<script>
+const C={
+MT:{n:'마스터/미스트레스',e:'👑',t:'dom',s:'존경받는 완벽한 지배자',d:'상대방에게 존경받기를 바라고, 그러기 위해 노력하는 성향이에요. 상대방의 정신과 육체를 완전히 통제하고 지배할 자격을 갖추고 싶어 해요.'},
+HU:{n:'헌터',e:'🐺',t:'dom',s:'본능적으로 제압하는 사냥꾼',d:'상대방을 육체적으로 완벽하게 제압하고 싶어 하는 성향이에요. 상대가 저항할수록 더 흥분하고, 강한 힘으로 제압하는 그 과정 자체를 즐겨요.'},
+BT:{n:'브랫 테이머',e:'🦁',t:'dom',s:'반항하는 상대를 길들이는 조련사',d:'순종하는 상대에게는 흥미를 느끼지 못해요. 반항하는 상대를 강제로 굴복시키는 게 재미있는 성향이에요. 평소엔 다정하지만 선을 넘는 순간 180도 돌변해요.'},
+OW:{n:'오너',e:'🔐',t:'dom',s:'강한 유대감으로 소유하는 보호자',d:'강한 유대감과 교감을 통해 상대를 소유하고 싶어 하는 성향이에요. 소유욕이 무척 강하고, 때로 따끔하게 훈육하지만 그 안엔 항상 애정이 담겨 있어요.'},
+DM:{n:'대디/마미',e:'🤗',t:'dom',s:'따뜻하게 보살피는 양육자',d:'상대를 관심과 애정으로 부드럽게 보살피고 싶어 하는 성향이에요. 대화와 부탁이 주된 지배 수단이지만, 상대에 따라서는 그 어떤 방법보다 강력해요.'},
+SA:{n:'사디스트',e:'⛓️',t:'dom',s:'고통을 통해 쾌감을 주는 가학자',d:'상대에게 가학 행위를 통해 고통을 주는 것을 즐기는 성향이에요. 상대가 고통스러워하거나 두려워하는 모습에서 흥분을 느껴요.'},
+SP:{n:'스팽커',e:'🖐️',t:'dom',s:'찰싹! 소리에 흥분하는 훈육자',d:'상대의 신체(특히 엉덩이)를 찰싹 소리가 나도록 때리는 행위에 흥분하는 성향이에요. 소리, 반응, 자국의 모양을 중요하게 생각해요.'},
+DG:{n:'디그레이더',e:'😈',t:'dom',s:'수치심을 자극하는 심리 전략가',d:'상대가 수치스러워하거나 부끄러워하는 모습을 보며 흥분하는 성향이에요. 음담패설 같은 자신만의 수단을 가지고 있어요.'},
+RI:{n:'리거',e:'🪢',t:'dom',s:'아름답게 묶는 예술가',d:'로프나 수갑 등으로 상대를 움직이지 못하도록 구속하는 것을 즐기는 성향이에요. 더 아름답게 묶는 것에 관심이 많은 예술가예요.'},
+DO:{n:'도미넌트',e:'🎯',t:'dom',s:'명령과 지시로 이끄는 지배자',d:'상대에게 명령하고 지시하는 것을 즐기는 성향이에요. 여러 수단으로 상대를 자신의 의지대로 지배하는 것이 목적이에요.'},
+SL:{n:'슬레이브',e:'🙇',t:'sub',s:'완전히 맡기는 헌신적인 복종자',d:'존경하는 상대에게 모든 의사 결정권을 맡기고 싶어 하는 성향이에요. 상대를 통해 더 나은 사람이 되는 기분을 느껴요.'},
+PR:{n:'프레이',e:'🐰',t:'sub',s:'저항하며 제압당하길 원하는 먹잇감',d:'거칠게 반항하는 자신을 상대가 무참하게 제압해 주기를 바라는 성향이에요. 저항하는 그 과정에서 흥분을 느끼는 거예요.'},
+BR:{n:'브랫',e:'😜',t:'sub',s:'일부러 반항하는 장난꾸러기',d:'이유 없이 순종하지 않고, 상대가 자신을 강제로 굴복시켜 주기를 바라는 성향이에요. 순종보다 굴복이 더 짜릿하다고 느껴요.'},
+PE:{n:'펫',e:'🐱',t:'sub',s:'소속감을 갈구하는 충실한 반려',d:'상대와 강한 유대감을 가지며 소유되고 싶어 하는 성향이에요. 상대를 기쁘게 하는 행동이 뭔지 늘 살피며 끊임없이 애정을 갈구해요.'},
+LI:{n:'리틀',e:'🧸',t:'sub',s:'보살핌을 받고 싶은 존재',d:'상대에게 보살핌을 받고 싶어 하는 성향이에요. 상대에게 의지할 때 가장 안정감을 느끼고, 관심을 끌기 위해 투정을 부리기도 해요.'},
+MA:{n:'마조히스트',e:'💥',t:'sub',s:'고통에서 쾌락을 느끼는 피학자',d:'상대에게 피학 당하면서 느끼는 고통을 통해 쾌락을 느끼는 성향이에요. 고통을 짜릿하다고 생각하며 상처마저 즐겨요.'},
+SK:{n:'스팽키',e:'🍑',t:'sub',s:'맞는 것에서 흥분을 느끼는 피훈육자',d:'상대가 내 몸을 찰싹 때리는 것에 흥분을 느끼는 성향이에요. 맞을 때 나는 소리와 고통의 쾌감을 중요하게 생각해요.'},
+DE:{n:'디그레이디',e:'🫣',t:'sub',s:'수치스러운 상황에서 흥분하는 피학자',d:'자신의 수치스럽고 부끄러운 모습을 보여주면서 흥분하는 성향이에요. 수치스러운 호칭으로 불리는 것을 좋아해요.'},
+RB:{n:'로프 버니',e:'🎀',t:'sub',s:'묶이는 것에서 짜릿함을 느끼는 피구속자',d:'로프나 수갑 등으로 움직이지 못하게 될 때 흥분하는 성향이에요. 예쁘게 묶여 구속되어 있을 때 짜릿한 흥분감에 빠져요.'},
+SU:{n:'서브미시브',e:'💝',t:'sub',s:'명령에 따르며 복종하는 순종자',d:'상대의 명령과 지시에 따르며 복종하는 것에 즐거움을 느끼는 성향이에요.'},
+SW:{n:'스위치',e:'🔄',t:'sw',s:'상황에 따라 변화하는 유연한 성향',d:'항상 지배적이거나 복종하기만 하는 게 아닌 성향이에요. 상황이나 상대에 따라 변화하며 역할을 바꿔가며 만족감을 얻어요.'},
+VA:{n:'바닐라',e:'🍦',t:'neutral',s:'일반적이고 부드러운 관계를 선호',d:'일반적이고 보통의 관계를 즐기는 성향이에요. 서로를 배려하고 만족감을 주기 위해 노력하는 타입이에요.'}
+};
+
+/* ═══ GLOSSARY ═══ */
+let glFilter='all';
+let glFrom='intro';
+function openGlossary(from){glFrom=from||'intro';renderGl();go('glossary')}
+function filterGl(f,el){
+  glFilter=f;
+  document.querySelectorAll('.gl-tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  renderGl();
+}
+function renderGl(){
+  const list=document.getElementById('glList');
+  let h='';
+  Object.entries(C).forEach(([k,c])=>{
+    let match=false;
+    if(glFilter==='all')match=true;
+    else if(glFilter==='dom'&&c.t==='dom')match=true;
+    else if(glFilter==='sub'&&c.t==='sub')match=true;
+    else if(glFilter==='etc'&&(c.t==='sw'||c.t==='neutral'))match=true;
+    if(!match)return;
+    const tl=c.t==='dom'?'지배':c.t==='sub'?'복종':c.t==='sw'?'스위치':'중립';
+    h+=`<div class="gl-item" onclick="openM('${k}')">
+      <div class="gl-item-top">
+        <span class="gl-item-emoji">${c.e}</span>
+        <span class="gl-item-name">${c.n}</span>
+        <span class="gl-item-tag">${tl}</span>
+      </div>
+      <div class="gl-item-short">${c.s}</div>
+    </div>`;
+  });
+  list.innerHTML=h;
+}
+
+/* ═══ SCREENING 16문항 ═══ */
+const QSCREEN=[
+{text:"나는 플레이 중에 상대방을 주도하는 쪽이고 싶다.",type:'ds',side:'dom'},
+{text:"나는 상대방에게 성적으로 괴롭힘을 당하고 싶은 욕구가 있다.",type:'ds',side:'sub'},
+{text:"나는 상대방이 플레이의 주도권을 가지고, 내 성적욕구를 충족시켜주길 바란다.",type:'ds',side:'sub'},
+{text:"나는 플레이중에 상대방을 주도하는 방법에 있어, 나름대로의 철학을 가지고 있다.",type:'ds',side:'dom'},
+{text:"나는 상대방에게 성적으로 봉사하는 것에 대체로 만족감을 느낀다.",type:'ds',side:'sub'},
+{text:"나는 플레이중에 상대방을 내 의지대로 움직이게 할 수 있는 방법이나 수단을 잘 알고 있다.",type:'ds',side:'dom'},
+{text:"나는 상대방의 성적인 지시나 명령에 따를 때 대부분 성적 쾌감을 느낀다.",type:'ds',side:'sub'},
+{text:"나는 상대방이 내 지시나 명령에 따라 행동하는 것을 보고 싶다.",type:'ds',side:'dom'},
+{text:"나는 나의 성적 성향에 대해서 확신을 가지고 있다.",type:'map',map:[['VA',-0.3],['SW',0.15]]},
+{text:"나는 상대방이 성적인 욕구를 채우기 위해서 나를 이용해주길 바란다.",type:'map',map:[['SU',0.5],['SL',0.5]]},
+{text:"나는 상대방에게 성적인 요구사항을 말하는 것이 부끄럽다.",type:'map',map:[['VA',0.3]]},
+{text:"나는 상대방과 평등한 관계보다 상하가 있는 관계를 선호한다.",type:'map',map:[['VA',-0.5],['DO',0.25],['SU',0.25]]},
+{text:"나는 상대방을 성적으로 지배할 수 있는 방법에 대해서 연구한다.",type:'map',map:[['DO',0.5],['SA',0.3]]},
+{text:"나는 상대방과 성적 성향이 맞지 않아도, 성격이나 다른부분이 잘 맞으면 즐겁게 만날 수 있다.",type:'map',map:[['VA',0.5]]},
+{text:"나의 성향은 지배적이기도 하고 순종적이기도 하다.",type:'map',map:[['SW',1]]},
+{text:"나는 내 성적 취향이 보통 사람들에 비해서 특이하다고 생각한다.",type:'map',map:[['VA',-0.3],['SW',0.15]]},
+];
+
+/* ═══ DOM 56문항 ═══ */
+const QD=[
+{text:"나는 플레이 중에 나에게 순종하는 상대방에게는 대체로 성적인 흥미를 느끼지 못한다.",map:[['BT',1]]},
+{text:"나는 플레이 중에 상대방을 순종적으로 만들 수 있는 내 나름대로의 수단을 가지고 있다.",map:[['DO',0.5],['BT',0.5]]},
+{text:"나는 상대방이 나에게 성적인 목적으로 장난을 치고, 무례하게 행동하는 것을 대부분 눈치 챈다.",map:[['BT',1]]},
+{text:"나는 상대방을 성적으로 괴롭힐 때, 상대방이 나를 할퀴고 깨물면 더 흥분된다.",map:[['HU',1]]},
+{text:"나는 상대방을 소유한다는 것에, 강한 책임감을 느낀다.",map:[['OW',1]]},
+{text:"나는 상대방에게 움직이지 말라고 지시하는 것 보다, 물리적으로 로프나 넥타이 벨트 등을 사용해서 묶는것에 더 쾌감을 느낀다.",map:[['RI',1]]},
+{text:"나는 플레이 중에 이성적으로 생각하기보다 본능에 몸을 맡기며 야성적이고 거칠게 행동한다.",map:[['HU',0.5],['PR',0.5]]},
+{text:"나는 플레이중에 상대방에게 원하는것이 있으면 부드럽게 안아주면서 조용히 부탁을 한다.",map:[['DM',0.5]]},
+{text:"나에게 있어서 목줄이라는 것은 상대방을 구속하는 도구일 뿐만 아니라, 상대방과 교감하는 도구이다.",map:[['OW',1]]},
+{text:"나는 내 욕구를 채우기 위해서, 상대방을 수치스럽고 부끄럽게 만드는 방법을 잘 알고 있다.",map:[['DG',1]]},
+{text:"내가 플레이중 상대방을 정신적으로 괴롭히는 이유는 상대방이 수치스러워 하고 부끄러워 하는 걸 보기 위해서이다.",map:[['DG',1]]},
+{text:"나는 플레이중에 상대방이 나를 할퀴고 깨물면서 거칠게 반항하는 것에 별로 신경쓰지 않는다.",map:[['HU',1]]},
+{text:"나는 플레이중에 상대방의 엉덩이를 보면 때리고 싶다는 생각에 사로잡힌다.",map:[['SP',1]]},
+{text:"나는 상대방이 나의 보살핌과 사랑에 나를 의지하며 믿고 따르기를 기대한다.",map:[['DM',1]]},
+{text:"나는 BDSM이 역할놀이의 한 종류라고 생각한다.",map:[['SW',0.17]]},
+{text:"나는 상대방이 나의 관심을 끌기 위한 장난이나 짖궂은 행동을 하는 것에 즐거움을 느낀다.",map:[['BT',1]]},
+{text:"나는 내가 소유한 상대방에게 존경받는 주인이 되기 위해서 최선을 다 한다.",map:[['MT',1]]},
+{text:"나는 내가 선호하는 성적인 행위를 명확하게 알고 있다.",map:[['VA',-0.33],['DO',0.33]]},
+{text:"나는 상대가 누구냐에 따라서, 또는 상황이나 기분에 따라서 지배적이기도 피지배적이기도 하다.",map:[['SW',1]]},
+{text:"나는 플레이중에 상대방에게 성적으로 명령하거나 지시하는 것을 자연스럽게 생각한다.",map:[['DO',1]]},
+{text:"나는 상대방이 내 명령이나 지시에 불응하는 것을 용납할 수 없다.",map:[['MT',0.5],['DO',0.5]]},
+{text:"나는 플레이중 상대방이 움직이지 못하게 묶여서 버둥거리는 걸 보며 성적인 흥분을 느낀다.",map:[['RI',1]]},
+{text:"나는 플레이 욕구와 성적 욕구는 다소 차이가 있으며 구분할 수 있는 것이라고 생각한다.",map:[['SW',0.17]]},
+{text:"나는 상대방을 아름답게 묶는 방법에 대해서 찾아보고 공부한다.",map:[['RI',1]]},
+{text:"나는 상대방이 나에게 의지하고 소속되려고 할 때 가장 행복하다.",map:[['OW',1]]},
+{text:"나는 지배하는 것과 복종하는 것 어느 한쪽만 콕 집어 선택하기가 어렵다.",map:[['SW',1]]},
+{text:"나는 상대방과 함께 실현하고 싶은 음탕한 성적 판타지가 있다.",map:[['SW',0.17]]},
+{text:"나는 상대방의 엉덩이를 때린 후에 그 자국을 보면서 묘한 만족감을 느낀다.",map:[['SP',1]]},
+{text:"나는 지배하고자 하는 욕구와 복종하고 싶은 욕구 양쪽 다 어느정도 충족해야 만족한다.",map:[['SW',1]]},
+{text:"나는 상대방이 내 말을 잘 듣는 예쁘고 착한 아이가 되었으면 하고, 그렇게 만들고 싶다.",map:[['DM',1],['MT',0.5]]},
+{text:"나는 상대방이 눈물과 콧물, 침으로 엉망이 된 얼굴을 보기 위해서 괴롭히는 걸 좋아한다.",map:[['SA',1]]},
+{text:"나는 플레이 중에 상대방이 내 지시를 듣고 부끄러운 자세로 기다리는 모습을 상상하면 흥분된다.",map:[['DO',0.5],['DG',0.5]]},
+{text:"나는 상대방에게 육체적인 고통을 주면서 짜릿함을 느낀다.",map:[['SA',1]]},
+{text:"나는 성적으로 음란한 상황보다, 로맨틱하고 부드러운 상황에 더 끌린다.",map:[['VA',1]]},
+{text:"나는 상대방을 지배하기 위해서 종종 성적으로 괴롭힌다.",map:[['SA',0.5],['DG',0.5]]},
+{text:"나는 플레이중에 상대방이 내 말을 안 듣고 반항할 때 대체로 더 흥분된다.",map:[['BT',1]]},
+{text:"나는 상대방의 불안함과 공허함을 채워줄 수 있는 방법은, 내가 상대방을 완벽하게 소유하여 통제하는 것이라고 생각한다.",map:[['OW',0.5],['MT',0.5]]},
+{text:"나에게 완벽한 파트너는 순종적인 부분과 지배적인 부분을 양쪽 다 조금씩 가지고 있는 사람이다.",map:[['SW',1]]},
+{text:"나는 상대방이 수치스러운 상황에서 부끄러워 하는 모습을 보며 묘한 흥분감을 느낀다.",map:[['DG',1]]},
+{text:"나는 상대방의 다른 매력보다 애교나 귀여운 행동에 성적 매력을 느낀다.",map:[['DM',1]]},
+{text:"나는 플레이 중에 상대방의 목을 조르면서, 상대가 어떤 표정을 짓는지 관찰하는 걸 좋아한다.",map:[['SA',1]]},
+{text:"나는 상대방이 로프나 수갑으로 묶여있는 모습이 예술적으로 느껴진다.",map:[['RI',1]]},
+{text:"내가 플레이중에 상대방을 혼내는 이유는, 단순히 혼날 일을 했기 때문이지, 상대방의 생각이나 행동을 교정하고 싶은 것은 아니다.",map:[['BT',0.5],['SP',0.5]]},
+{text:"나는 다른 사람들에 비해서 확실히 성적으로 음란한 변태라고 생각한다.",map:[['SW',0.17]]},
+{text:"나는 상대방이 나의 애완동물처럼 행동하며 애교를 부릴 때 강한 성적 충동을 느낀다.",map:[['OW',0.5],['DM',0.5]]},
+{text:"나는 상대방에게 완전한 복종을 원하고, 그렇게 하도록 만들 것이다.",map:[['MT',1],['DO',0.5]]},
+{text:"나는 성적 성향에 대해서 공부하고 나의 성적 성향에 꼭 맞는 상대방을 찾기 위한 노력을 해 왔거나, 노력하는 중이다.",map:[['SW',0.17]]},
+{text:"나는 플레이 중에 상대방이 저항하고 반항하지 않으면 대체로 성적인 흥분이 생기지 않는다.",map:[['BT',1]]},
+{text:"나는 체벌의 의미로 엉덩이를 때리는 것을 가장 좋아한다.",map:[['SP',1]]},
+{text:"나는 상대방을 통제하고 지배하기보다, 나름대로의 기준을 정하고 자유롭게 행동하도록 한다.",map:[['VA',1],['DM',-0.5]]},
+{text:"나는 상대방의 몸에 내가 만든 상처나 멍자국이 있는 걸 보면서 만족스러움을 느낀다.",map:[['SA',1]]},
+{text:"나는 섹스가 없는 플레이도 충분히 매력적으로 느껴진다.",map:[['SW',0.17]]},
+{text:"나는 플레이 상황에서 때로는 짐승처럼 상대방을 무참하게 겁탈하고 싶다는 생각을 한다.",map:[['HU',1]]},
+{text:"나는 플레이중에 상대방을 힘으로 제압하고 짓누르는 과정에서 쾌감을 느낀다.",map:[['HU',1]]},
+{text:"나는 플레이중에 상대방에게 음담패설을 하거나, 수치스러운 호칭으로 상대방을 부르는걸 좋아한다.",map:[['DG',1]]},
+{text:"나는 상대방의 엉덩이를 때릴 때, 상대방의 다양한 반응을 즐긴다.",map:[['SP',1]]},
+];
+
+/* ═══ SUB 56문항 ═══ */
+const QS=[
+{text:"나는 지배하고자 하는 욕구와 복종하고 싶은 욕구 양쪽 다 어느정도 충족해야 만족한다.",map:[['SW',1]]},
+{text:"나의 채울수 없는 공허함과 끝없는 불안함은, 내 모든걸 완벽하게 소유하고 통제해 줄 상대방이 없기 때문이다.",map:[['SL',1],['PE',0.5]]},
+{text:"나는 플레이 중에 상대방이 나를 무섭고 위험한 모습으로 거칠게 제압 해 주기를 바란다.",map:[['PR',1]]},
+{text:"내가 상대방에게 장난을 친다는 것은 혼나고 싶다는 표현이며, 굉장히 음란한 의미이다.",map:[['BR',1]]},
+{text:"나는 플레이 중에 체벌의 의미로 엉덩이를 맞는 것을 가장 좋아한다.",map:[['SK',1]]},
+{text:"나는 상대방의 지시나 명령을 따르면서, 상대방이 좋아하는 말이나 행동을 배워나갈 때 기쁨을 느낀다.",map:[['SL',1]]},
+{text:"나는 상대방의 지시나 명령에 복종할 때 대체로 성적 쾌감을 느낀다.",map:[['SU',1]]},
+{text:"나는 플레이 중에 성적으로 수치스럽고 음란한 음담패설을 듣는 것을 좋아한다.",map:[['DE',1]]},
+{text:"나는 내 장난에 상대방이 화를 내면, 내가 원하는 대로 된 것 같아 기쁘다.",map:[['BR',1]]},
+{text:"나는 상대방에게 완전히 소유되기 위해 존재하는 성적인 노예이고 싶다.",map:[['SL',1]]},
+{text:"나는 상대방이 나를 애완동물 대하듯 예뻐해 주고 안아줄 때 성적으로 음란한 기분이 든다.",map:[['PE',1]]},
+{text:"나는 상대방에게 의지하고 보살핌을 받으면서 성적 만족감을 느낀다.",map:[['LI',1]]},
+{text:"나는 BDSM이 역할놀이의 한 종류라고 생각한다.",map:[['SW',0.17]]},
+{text:"내가 플레이중에 상대방에게 '싫어' 또는 '그만해' 라고 하는 말은 사실 더 해달라는 의미이다.",map:[['PR',0.5],['BR',0.5]]},
+{text:"나는 플레이 중에 본능적으로 상대방을 깨물고 할퀴면서 반항하고 도망친다.",map:[['PR',1]]},
+{text:"나는 섹스가 없는 플레이도 충분히 매력적으로 느껴진다.",map:[['SW',0.17]]},
+{text:"나는 내 몸에 난 멍이나 상처를 보면서 왠지 모를 만족감을 느낀다.",map:[['MA',1]]},
+{text:"나는 상대방이 나에게 목줄을 채워 줄 때 강한 교감과 소속감을 느낀다.",map:[['PE',1]]},
+{text:"나는 상대방이 나를 시간을 들여 묶는 모습을 보면서 섹시하다고 생각한다.",map:[['RB',1]]},
+{text:"나에게 완벽한 파트너는 순종적인 부분과 지배적인 부분을 양쪽 다 조금씩 가지고 있는 사람이다.",map:[['SW',1]]},
+{text:"나는 상대방이 나를 거칠게 대하는 것 보다, 부드럽게 쓰다듬고 어루만져주는 것을 더 좋아한다.",map:[['VA',0.5],['LI',0.5]]},
+{text:"나는 고통이라는 감각이, 아파서 싫다기 보다 짜릿해서 좋다 라는 생각을 종종 한다.",map:[['MA',1]]},
+{text:"나는 상대가 누구냐에 따라서, 또는 상황이나 기분에 따라서 지배적이기도 피지배적이기도 하다.",map:[['SW',1]]},
+{text:"나는 상대방의 명령과 지시를 거역할 수 없는 그 야릇한 분위기에 끌린다.",map:[['SU',1]]},
+{text:"나는 플레이 욕구와 성적 욕구는 다소 차이가 있으며 구분할 수 있는 것이라고 생각한다.",map:[['SW',0.17]]},
+{text:"나는 상대방에게 가끔 장난을 치기도 하지만, 혼나고 싶어서가 아니라 관심을 끌기 위한 목적이다.",map:[['LI',1],['BR',-0.5]]},
+{text:"나는 내가 선호하는 성적인 행위를 명확하게 알고 있다.",map:[['VA',-0.33],['DO',0.33]]},
+{text:"내가 상대방의 말에 복종하지 않는 이유는, 순종하는 것보다 강제로 굴복당하는 게 더 재미있기 때문이다.",map:[['BR',1]]},
+{text:"나는 상대방이 나를 어떻게 성적으로 괴롭힐지 궁금해서 일부러, 상대방을 자극하는 짖궂은 행동을 한다.",map:[['BR',1]]},
+{text:"나는 플레이 상황에서 상대방에게 제압당해 강제로 당하고 싶다는 생각을 종종 한다.",map:[['PR',1]]},
+{text:"나는 플레이중에 매를 맞는 행위가 성적으로 음란하게 느껴진다.",map:[['SK',1]]},
+{text:"나는 플레이중에 상대방에게 수치스럽고 모욕적인 지시를 받으면 싫다기 보다, 대체로 더 흥분한다.",map:[['DE',1]]},
+{text:"나는 상대방에게 소유되었다는 사실에, 만족감과 행복감을 느낀다.",map:[['PE',1],['SL',0.5]]},
+{text:"나는 플레이 중에 상대방이 나를 부끄럽고 수치스러운 호칭으로 불러주길 바란다.",map:[['DE',1]]},
+{text:"나는 플레이중에 상대방의 음란한 지시를 따르면서 복종하는 기분이 들 때 가장 흥분된다.",map:[['SU',1]]},
+{text:"나의 애교나 귀여운 행동을 통해서, 상대방이 만족하는 것을 보면 행복하다.",map:[['LI',0.5],['PE',0.5]]},
+{text:"나는 플레이 중에 내가 아무리 거칠게 반항하고 저항해도, 상대방이 절대 멈추지 않기를 바란다.",map:[['PR',1]]},
+{text:"나에게 있어서 고통은 쾌락과 거의 같은 의미이다.",map:[['MA',1]]},
+{text:"나는 성적으로 혼날 목적을 가지고, 상대방을 깨물거나 꼬집으며 짖궂은 행동을 한다.",map:[['BR',1]]},
+{text:"나는 상대방에게 일상 생활까지 완벽하게 지배당하고 싶다.",map:[['SL',1]]},
+{text:"나는 지배하는 것과 복종하는 것 어느 한쪽만 콕 집어 선택하기가 어렵다.",map:[['SW',1]]},
+{text:"나는 내가 묶여 있었던 자국을 보면서 묘한 행복감에 빠진다.",map:[['RB',1]]},
+{text:"나는 상대방이 도구를 사용해서, 나를 움직이지 못하도록 속박할 때 더 흥분된다.",map:[['RB',1]]},
+{text:"나는 플레이 중에 상대방의 명령을 따르는 입장이고 싶다.",map:[['SU',1]]},
+{text:"나는 성적으로 음란한 상황보다, 로맨틱하고 부드러운 상황에 더 끌린다.",map:[['VA',1]]},
+{text:"나는 다른 사람들에 비해서 확실히 성적으로 음란한 변태라고 생각한다.",map:[['SW',0.17]]},
+{text:"나는 플레이 중에 상대방이 화가 난 모습에서 섹시함을 느끼고, 그 모습을 보기 위해서 상대방에게 짓궂게 행동한다.",map:[['BR',1]]},
+{text:"나는 플레이 중에 상대방이 내 엉덩이를 때려주기를 기대한다.",map:[['SK',1]]},
+{text:"복종, 굴복, 순종이라는 단어들은 대체로 내 성적 성향을 잘 설명한다.",map:[['SU',1]]},
+{text:"나는 플레이중에 상대방이 나를 성적으로 고문하며 때려주는 것을 원한다.",map:[['MA',1]]},
+{text:"나는 상대방이 내 몸을 찰싹 소리가 나도록 때릴 때 흥분된다.",map:[['SK',0.5],['MA',0.5]]},
+{text:"나는 상대방이 평상시에는 다정하다가, 화가 나서 나를 혼내줄 때는 완전히 거칠게 변했으면 좋겠다.",map:[['BR',0.5],['LI',0.5]]},
+{text:"나는 상대방에게 로프나 수갑으로 묶어달라고 요청하는 것이 대체로 어렵지 않다.",map:[['RB',1]]},
+{text:"나는 상대방과 함께 실현하고 싶은 음탕한 성적 판타지가 있다.",map:[['SW',0.17]]},
+{text:"나는 상대방에게 나의 부끄럽고 창피한 모습을 보여주면서 성적으로 흥분한다.",map:[['DE',1]]},
+{text:"나는 성적 성향에 대해서 공부하고 나의 성적 성향에 꼭 맞는 상대방을 찾기 위한 노력을 해 왔거나, 노력하는 중이다.",map:[['SW',0.17]]},
+];
+
+const QA=(()=>{const seen=new Set(),out=[];[...QD,...QS].forEach(q=>{if(!seen.has(q.text)){seen.add(q.text);out.push(q)}});return out})();
+
+/* ═══ STATE ═══ */
+let phase='',curQ=0,ans=[],curQs=[];
+let domSc=0,subSc=0,midR='',screenAns=[];
+let raw={},picked=new Set();
+const profile={gender:null,age:null,orient:null};
+
+function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+
+/* ═══ CHIPS ═══ */
+document.querySelectorAll('.chips').forEach(g=>{
+  const field=g.dataset.f;
+  g.querySelectorAll('.chip').forEach(c=>{
+    c.onclick=()=>{
+      g.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));
+      c.classList.add('on');
+      if(field)profile[field]=c.dataset.v;
+      checkSetup();
+    }
+  });
+});
+function checkSetup(){document.getElementById('btnSetup').disabled=!(profile.gender&&profile.age&&profile.orient)}
+
+/* ═══ 7-DOT ═══ */
+const DL=['전혀 아니에요','아니에요','약간 아니에요','잘 모르겠어요','약간 그래요','그래요','매우 그래요'];
+const DV=[0,17,33,50,67,83,100];
+
+function pick(i){
+  ans[curQ]=DV[i];picked.add(phase+'_'+curQ);
+  document.querySelectorAll('#dotsRow .dot').forEach((d,j)=>d.classList.toggle('on',j===i));
+  document.getElementById('dotVal').textContent=DL[i];
+}
+function syncDots(){
+  const key=phase+'_'+curQ;let ci=-1;
+  if(picked.has(key)){let md=Infinity;DV.forEach((x,i)=>{const d=Math.abs(x-ans[curQ]);if(d<md){md=d;ci=i}});}
+  document.querySelectorAll('#dotsRow .dot').forEach((d,j)=>d.classList.toggle('on',j===ci));
+  document.getElementById('dotVal').textContent=ci>=0?DL[ci]:'';
+}
+
+/* ═══ RENDER ═══ */
+function renderQ(){
+  document.getElementById('qnum').textContent=String(curQ+1).padStart(2,'0');
+  document.getElementById('qtxt').textContent=curQs[curQ].text;
+  document.getElementById('cnt').textContent=`${curQ+1} / ${curQs.length}`;
+  document.getElementById('pbar').style.width=((curQ+1)/curQs.length*100)+'%';
+  document.getElementById('btnN').textContent=curQ===curQs.length-1?(phase==='screening'?'다음 단계':'결과 보기'):'다음';
+  syncDots();
+  const c=document.getElementById('qcard');c.style.animation='none';c.offsetHeight;c.style.animation='';
+}
+function nextQ(){
+  if(!picked.has(phase+'_'+curQ))return;
+  if(curQ<curQs.length-1){curQ++;renderQ()}else finishPhase();
+}
+function prevQ(){if(curQ>0){curQ--;renderQ()}}
+
+/* ═══ START ═══ */
+function startScreening(){phase='screening';curQ=0;curQs=QSCREEN;ans=Array(QSCREEN.length).fill(50);picked=new Set();go('test');renderQ()}
+
+/* ═══ FINISH ═══ */
+function finishPhase(){
+  if(phase==='screening'){
+    domSc=0;subSc=0;
+    QSCREEN.forEach((q,i)=>{if(q.type!=='ds')return;const v=(ans[i]-50)/50;if(q.side==='dom')domSc+=v;else subSc+=v});
+    screenAns=ans.slice();
+    const d=domSc-subSc,t=domSc+subSc;
+    if(t<0.5&&Math.abs(d)<0.5)midR='van';else if(Math.abs(d)<0.4)midR='sw';else if(d>=0.4)midR='dom';else if(d<=-0.4)midR='sub';else midR='dk';
+    showMid();return;
+  }
+  if(phase==='detail'){computeScores();showLoad();}
+}
+
+/* ═══ MID ═══ */
+function showMid(){
+  const M={
+    dom:{i:'D',t:'대체로 지배적인 성향을<br>가지고 있는 것 같아요',d:'상대방을 통제할 수 있는 권한을 가지고 싶어 하지 않나요? 지배적 성향은 다양하게 분류되어 있어요. 어쩌면 그중 한 가지 성향을 가지고 있을지도 몰라요.'},
+    sub:{i:'S',t:'대체로 피지배적인 성향을<br>가지고 있는 것 같아요',d:'상대방에게 본인을 통제할 수 있는 권한을 주고 싶어 하지 않나요? 피지배적 성향은 다양하게 분류되어 있어요. 어쩌면 그중 한 가지 성향을 가지고 있을지도 몰라요.'},
+    sw:{i:'±',t:'지배적 성향과 피지배적 성향을<br>동시에 가졌을지도 몰라요',d:'항상 지배적인 역할만 원하지도, 항상 복종하는 역할만 원하지도 않는 건 아닌가요? 상황이나 상대에 따라 변화하는 성향을 가지고 있는 것 같아요.'},
+    van:{i:'V',t:'성향이 매우<br>소프트한 것 같아요',d:'아마 일반적이고 보통의 관계를 즐기는 성향일 수 있어요. 하지만 더 자세한 테스트로 숨겨진 성향을 알아볼 수 있을지도 몰라요.'},
+    dk:{i:'?',t:'아직 정확하게<br>파악하기 어려워요',d:'성향을 정확하게 알기 위해서는 조금 더 자세한 테스트가 필요해요. BDSM에는 매우 다양한 종류의 성향이 존재하거든요.'},
+  };
+  const m=M[midR];
+  document.getElementById('midI').textContent=m.i;
+  document.getElementById('midT').innerHTML=m.t;
+  document.getElementById('midD').textContent=m.d;
+document.getElementById('midB').innerHTML=
+  `<button class="btn" onclick="startDet('all')">상세 테스트 시작하기 →</button>`+
+`<button class="btn-g" onclick="openGlossary('midresult')" style="margin-top:4px">22가지 성향 미리 보기</button>`;
+  go('midresult');
+}
+
+function startDet(type){window._dt=type;phase='detail';curQ=0;if(type==='dom')curQs=QD;else if(type==='sub')curQs=QS;else curQs=QA;ans=Array(curQs.length).fill(50);picked=new Set();go('test');renderQ()}
+
+/* ═══ SCORING ═══ */
+function computeScores(){
+  raw={};Object.keys(C).forEach(k=>raw[k]=0);
+  QSCREEN.forEach((q,i)=>{if(q.type!=='map'||!q.map)return;const v=(screenAns[i]-50)/50;q.map.forEach(([c,w])=>{if(raw[c]!==undefined)raw[c]+=v*w})});
+  curQs.forEach((q,i)=>{const v=(ans[i]-50)/50;q.map.forEach(([c,w])=>{if(raw[c]!==undefined)raw[c]+=v*w})});
+}
+
+function showLoad(){go('loading');['l1','l2','l3'].forEach((id,i)=>{setTimeout(()=>document.getElementById(id).classList.add('dn'),500+i*700)});setTimeout(showRes,2800)}
+
+/* ═══ RESULT ═══ */
+function showRes(){
+  const MX=6;const pcts={};
+  Object.keys(raw).forEach(k=>{if(raw[k]===null){pcts[k]=null;return}pcts[k]=Math.max(-100,Math.min(100,Math.round(raw[k]/MX*100)))});
+  window._pcts=pcts;
+  const sorted=Object.entries(pcts).filter(([,v])=>v!==null).sort((a,b)=>b[1]-a[1]);
+  const top=sorted[0],cat=C[top[0]];
+  const tl=cat.t==='dom'?'DOMINANT':cat.t==='sub'?'SUBMISSIVE':cat.t==='sw'?'SWITCH':'NEUTRAL';
+  document.getElementById('rl').textContent=tl;
+  document.getElementById('rn').textContent=cat.n;
+  document.getElementById('rs2').textContent=cat.s;
+  document.getElementById('rp').textContent=(top[1]>0?'+':'')+top[1]+'%';
+  let h3='';sorted.slice(0,3).forEach(([k,v],i)=>{const c=C[k];const tp=c.t==='dom'?'지배 계열':c.t==='sub'?'복종 계열':c.t==='sw'?'스위치':'중립';
+    h3+=`<div class="tc" onclick="openM('${k}')"><div class="tc-r">${i+1}</div><div class="tc-b"><div class="tc-n">${c.e} ${c.n}</div><div class="tc-tp">${tp}</div><div class="tc-d">${c.s}</div></div><div class="tc-s">${v>0?'+':''}${v}%</div></div>`;
+  });
+  document.getElementById('top3').innerHTML=h3;
+  let ha='';sorted.forEach(([k,v])=>{const c=C[k];const pos=v>=0;const w=Math.min(Math.abs(v),100)/100*60;
+    const tl2=c.t==='dom'?'지배':c.t==='sub'?'복종':c.t==='sw'?'스위치':'중립';
+    ha+=`<div class="ri" onclick="openM('${k}')"><div class="ri-n">${c.e} ${c.n}<span class="ri-tg">${tl2}</span></div><div class="ri-sc ${pos?'p':'ng'}">${v>0?'+':''}${v}%</div><div class="ri-br"><div class="ri-fl ${pos?'':'ng'}" style="width:${w}px;${pos?'left:0':'right:0'}"></div></div></div>`;
+  });
+  Object.entries(pcts).filter(([,v])=>v===null).forEach(([k])=>{const c=C[k];
+    ha+=`<div class="ri" onclick="openM('${k}')"><div class="ri-n" style="color:var(--gray-400)">${c.e} ${c.n}<span class="ri-tg">미측정</span></div><div class="ri-sc ng">—</div><div class="ri-br"></div></div>`;
+  });
+  document.getElementById('allR').innerHTML=ha;go('result');
+}
+
+function openM(k){const c=C[k];document.getElementById('mN').textContent=c.e+' '+c.n;document.getElementById('mB').textContent=c.d;document.getElementById('modal').classList.add('on');document.body.style.overflow='hidden'}
+function closeM(){document.getElementById('modal').classList.remove('on');document.body.style.overflow=''}
+
+function copyR(){
+  const p=window._pcts,sorted=Object.entries(p).filter(([,v])=>v!==null).sort((a,b)=>b[1]-a[1]);
+  let t='✦ 나의 성향 테스트 결과\n\n';
+  sorted.forEach(([k,v])=>{t+=`${C[k].e} ${C[k].n}: ${v>0?'+':''}${v}%\n`});
+  Object.entries(p).filter(([,v])=>v===null).forEach(([k])=>{t+=`${C[k].e} ${C[k].n}: 미측정\n`});
+  t+='\n────────────';
+t+='\n섹슈얼 웰니스 매거진 \'트라이미\'';
+t+='\n지금 첫 달 무료로 구독하기 →';
+t+='\nhttps://tryme.im';
+  navigator.clipboard.writeText(t).then(()=>{
+    const b=document.getElementById('btnCopy');b.textContent='복사 완료 ✓';b.style.background='var(--gray-600)';
+    setTimeout(()=>{b.textContent='결과 복사하기';b.style.background=''},2e3);
+  }).catch(()=>alert('결과가 복사되었어요.'));
+}
+function shareR(){
+  const p=window._pcts,sorted=Object.entries(p).filter(([,v])=>v!==null).sort((a,b)=>b[1]-a[1]);
+  let t='✦ 나의 성향 테스트 결과\n\n';
+  sorted.forEach(([k,v])=>{t+=`${C[k].e} ${C[k].n}: ${v>0?'+':''}${v}%\n`});
+  Object.entries(p).filter(([,v])=>v===null).forEach(([k])=>{t+=`${C[k].e} ${C[k].n}: 미측정\n`});
+  t+='\n────────────';
+  t+='\n섹슈얼 웰니스 매거진 \'트라이미\'';
+t+='\n지금 첫 달 무료로 구독하기 →';
+t+='\nhttps://tryme.im';
+
+  if(navigator.share){
+    navigator.share({title:'BDSM 성향 테스트 결과',text:t}).catch(()=>{});
+  } else {
+    navigator.clipboard.writeText(t).then(()=>{
+      const b=document.querySelector('.ra .btn');b.textContent='복사 완료 ✓';b.style.background='var(--gray-600)';
+      setTimeout(()=>{b.textContent='결과 공유하기';b.style.background=''},2e3);
+    }).catch(()=>alert(t));
+  }
+}
+</script>
+</body>
+</html>
