@@ -615,7 +615,10 @@ function nextQ(){
 function prevQ(){if(curQ>0){curQ--;renderQ()}else if(phase==='screening'){go('setup')}}
 
 /* ═══ START ═══ */
-function startScreening(){phase='screening';curQ=0;curQs=QSCREEN;ans=Array(QSCREEN.length).fill(50);picked=new Set();go('test');renderQ()}
+function startScreening(){
+  gtag('event','BDSM_테스트_시작',{event_category:'engagement'});
+  phase='screening';curQ=0;curQs=QSCREEN;ans=Array(QSCREEN.length).fill(50);picked=new Set();go('test');renderQ();
+}
 
 /* ═══ FINISH ═══ */
 function finishPhase(){
@@ -649,7 +652,7 @@ document.getElementById('midB').innerHTML=
   go('midresult');
 }
 
-function startDet(type){gtag('event','detail_test_start',{event_category:'engagement'});window._dt=type;phase='detail';curQ=0;if(type==='dom')curQs=QD;else if(type==='sub')curQs=QS;else curQs=QA;ans=Array(curQs.length).fill(50);picked=new Set();go('test');renderQ()}
+function startDet(type){gtag('event','BDSM_상세테스트_시작',{event_category:'engagement'});window._dt=type;phase='detail';curQ=0;if(type==='dom')curQs=QD;else if(type==='sub')curQs=QS;else curQs=QA;ans=Array(curQs.length).fill(50);picked=new Set();go('test');renderQ()}
 
 /* ═══ SCORING ═══ */
 function computeScores(){
@@ -690,13 +693,13 @@ function showRes(){
     ha+=`<div class="ri" onclick="openM('${k}')"><div class="ri-n" style="color:var(--gray-400)">${c.e} ${c.n}<span class="ri-tg">미측정</span></div><div class="ri-sc ng">—</div><div class="ri-br"></div></div>`;
   });
   document.getElementById('allR').innerHTML=ha;go('result');
-  gtag('event','test_complete',{event_category:'engagement'});
+  gtag('event','BDSM_테스트_완료',{event_category:'engagement'});
 }
 
 function openM(k){const c=C[k];document.getElementById('mN').textContent=c.e+' '+c.n;document.getElementById('mB').textContent=c.d;document.getElementById('modal').classList.add('on');document.body.style.overflow='hidden'}
 function closeM(){document.getElementById('modal').classList.remove('on');document.body.style.overflow=''}
 function shareR(){
-  gtag('event','share_result',{event_category:'engagement'});
+  gtag('event','BDSM_결과_공유',{event_category:'engagement'});
   const p=window._pcts,sorted=Object.entries(p).filter(([,v])=>v!==null).sort((a,b)=>b[1]-a[1]);
   let t='✦ 나의 성향 테스트 결과\n\n';
   sorted.forEach(([k,v])=>{t+=`${C[k].e} ${C[k].n}: ${v>0?'+':''}${v}%\n`});
