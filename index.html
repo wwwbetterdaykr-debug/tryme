@@ -660,8 +660,8 @@ function computeScores(){
 
 function showLoad(){
   go('loading');
-  ['l1','l2','l3'].forEach((id,i)=>{setTimeout(()=>document.getElementById(id).classList.add('dn'),500+i*700)});
-  setTimeout(()=>{document.getElementById('ldMsg').textContent='⚠️ 결과 화면을 벗어나면 데이터가 사라져요!'},1200);
+  ['l1','l2','l3'].forEach((id,i)=>{setTimeout(()=>document.getElementById(id).classList.add('dn'),500+i*1000)});
+  setTimeout(()=>{document.getElementById('ldMsg').textContent='⚠️ 결과 화면을 벗어나면 데이터가 사라져요!'},2500);
   setTimeout(()=>{document.getElementById('ldMsg').textContent='소중한 결과를 꼭 캡처하거나 공유해 주세요'},4200);
   setTimeout(showRes,6200);
 }
