@@ -610,7 +610,7 @@ function nextQ(){
   if(!picked.has(phase+'_'+curQ))return;
   if(curQ<curQs.length-1){curQ++;renderQ()}else finishPhase();
 }
-function prevQ(){if(curQ>0){curQ--;renderQ()}}
+function prevQ(){if(curQ>0){curQ--;renderQ()}else if(phase==='screening'){go('setup')}}
 
 /* ═══ START ═══ */
 function startScreening(){phase='screening';curQ=0;curQs=QSCREEN;ans=Array(QSCREEN.length).fill(50);picked=new Set();go('test');renderQ()}
