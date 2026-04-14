@@ -661,9 +661,9 @@ function computeScores(){
 function showLoad(){
   go('loading');
   ['l1','l2','l3'].forEach((id,i)=>{setTimeout(()=>document.getElementById(id).classList.add('dn'),500+i*700)});
-  setTimeout(()=>{document.getElementById('ldMsg').textContent='⚠️ 결과 화면을 벗어나면 데이터가 사라져요!'},2300);
-  setTimeout(()=>{document.getElementById('ldMsg').textContent='소중한 결과를 꼭 캡처하거나 공유해 주세요'},3000);
-  setTimeout(showRes,4500);
+  setTimeout(()=>{document.getElementById('ldMsg').textContent='⚠️ 결과 화면을 벗어나면 데이터가 사라져요!'},3000);
+  setTimeout(()=>{document.getElementById('ldMsg').textContent='소중한 결과를 꼭 캡처하거나 공유해 주세요'},3500);
+  setTimeout(showRes,4000);
 }
 
 /* ═══ RESULT ═══ */
