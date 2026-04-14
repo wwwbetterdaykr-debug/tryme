@@ -589,6 +589,7 @@ function pick(i){
   ans[curQ]=DV[i];picked.add(phase+'_'+curQ);
   document.querySelectorAll('#dotsRow .dot').forEach((d,j)=>d.classList.toggle('on',j===i));
   document.getElementById('dotVal').textContent=DL[i];
+  setTimeout(()=>{nextQ()},400);
 }
 function syncDots(){
   const key=phase+'_'+curQ;let ci=-1;
