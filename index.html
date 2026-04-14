@@ -306,15 +306,14 @@ body {font-family:var(--sans);background:var(--white);color:var(--black);line-he
 <div id="loading" class="screen">
 <div class="ld-r"></div>
 <h2 class="ld-t">결과를 분석하고 있어요</h2>
-<p class="ld-d">잠시만 기다려 주세요</p>
+<p class="ld-d" id="ldMsg">잠시만 기다려 주세요</p>
 <div class="ld-ss">
 <div class="ld-s" id="l1"><div class="ld-o"></div><span>응답 데이터 수집</span></div>
 <div class="ld-s" id="l2"><div class="ld-o"></div><span>성향 점수 계산</span></div>
 <div class="ld-s" id="l3"><div class="ld-o"></div><span>맞춤 리포트 생성</span></div>
-<div class="ld-s" id="l4"><div class="ld-o"></div><span>⚠️ 결과 화면을 벗어나면 데이터가 사라져요!</span></div>
-<div class="ld-s" id="l5"><div class="ld-o"></div><span>소중한 결과를 꼭 캡처하거나 공유해 주세요.</span></div>
 </div>
 </div>
+
 
 <!-- ===== RESULT ===== -->
 <div id="result" class="screen">
@@ -659,7 +658,13 @@ function computeScores(){
   curQs.forEach((q,i)=>{const v=(ans[i]-50)/50;q.map.forEach(([c,w])=>{if(raw[c]!==undefined)raw[c]+=v*w})});
 }
 
-function showLoad(){go('loading');['l1','l2','l3','l4','l5'].forEach((id,i)=>{setTimeout(()=>document.getElementById(id).classList.add('dn'),500+i*700)});setTimeout(showRes,4200)}
+function showLoad(){
+  go('loading');
+  ['l1','l2','l3'].forEach((id,i)=>{setTimeout(()=>document.getElementById(id).classList.add('dn'),500+i*700)});
+  setTimeout(()=>{document.getElementById('ldMsg').textContent='⚠️ 결과 화면을 벗어나면 데이터가 사라져요!'},2300);
+  setTimeout(()=>{document.getElementById('ldMsg').textContent='소중한 결과를 꼭 캡처하거나 공유해 주세요'},3000);
+  setTimeout(showRes,4500);
+}
 
 /* ═══ RESULT ═══ */
 function showRes(){
