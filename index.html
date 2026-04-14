@@ -687,21 +687,6 @@ function showRes(){
 
 function openM(k){const c=C[k];document.getElementById('mN').textContent=c.e+' '+c.n;document.getElementById('mB').textContent=c.d;document.getElementById('modal').classList.add('on');document.body.style.overflow='hidden'}
 function closeM(){document.getElementById('modal').classList.remove('on');document.body.style.overflow=''}
-
-function copyR(){
-  const p=window._pcts,sorted=Object.entries(p).filter(([,v])=>v!==null).sort((a,b)=>b[1]-a[1]);
-  let t='✦ 나의 성향 테스트 결과\n\n';
-  sorted.forEach(([k,v])=>{t+=`${C[k].e} ${C[k].n}: ${v>0?'+':''}${v}%\n`});
-  Object.entries(p).filter(([,v])=>v===null).forEach(([k])=>{t+=`${C[k].e} ${C[k].n}: 미측정\n`});
-  t+='\n────────────';
-t+='\n섹슈얼 웰니스 매거진 \'트라이미\'';
-t+='\n지금 첫 달 무료로 구독하기 →';
-t+='\nhttps://tryme.im';
-  navigator.clipboard.writeText(t).then(()=>{
-    const b=document.getElementById('btnCopy');b.textContent='복사 완료 ✓';b.style.background='var(--gray-600)';
-    setTimeout(()=>{b.textContent='결과 복사하기';b.style.background=''},2e3);
-  }).catch(()=>alert('결과가 복사되었어요.'));
-}
 function shareR(){
   gtag('event','share_result',{event_category:'engagement'});
   const p=window._pcts,sorted=Object.entries(p).filter(([,v])=>v!==null).sort((a,b)=>b[1]-a[1]);
