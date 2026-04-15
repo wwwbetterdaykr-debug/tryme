@@ -76,10 +76,7 @@ body{font-family:var(--sans);background:var(--white);color:var(--black);line-hei
 .q-area{flex:1;display:flex;flex-direction:column;justify-content:center;padding:40px 28px 20px}
 .q-card{animation:qIn .3s cubic-bezier(.4,0,.2,1)}
 @keyframes qIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-.q-n{font-family:var(--serif);font-size:48px;font-weight:900;color:var(--gray-200);margin-bottom:16px;position:relative;
-  /* 응원팝업 공간 확보 */
-  padding-top: 52px;
-}
+.q-n{font-family:var(--serif);font-size:48px;font-weight:900;color:var(--gray-200);margin-bottom:16px;position:relative;}
 .q-t{font-size:19px;font-weight:500;line-height:1.65;letter-spacing:-.2px;word-break:keep-all}
 .dots-w{padding:0 5px;margin-top:36px}
 .dots-l{display:flex;justify-content:space-between;font-size:12px;color:var(--gray-400);margin-bottom:18px;padding:0 4px}
@@ -183,13 +180,12 @@ body{font-family:var(--sans);background:var(--white);color:var(--black);line-hei
 /* ★ 통통 튀는 애니메이션 (팝업 유지 시 계속 실행) */
 @keyframes bubble{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 
-/* ★ 응원 팝업 */
+/* ★ 응원 팝업 — dots-v 아래, test-nav 위 공간에 고정 */
 .cheer-wrap{
-  position:absolute;
-  top: 0;           /* q-n의 padding-top 공간 상단에 위치 */
-  left:0;
   width:100%;
+  text-align:center;
   pointer-events:none;
+  padding:12px 28px 4px;
 }
 .cheer-pop{
   display:inline-block;
@@ -307,6 +303,8 @@ body{font-family:var(--sans);background:var(--white);color:var(--black);line-hei
 <div class="dots-v" id="dotVal"></div>
 </div>
 </div>
+<!-- ★ 응원 팝업 삽입 위치: 원형 버튼 아래, 이전/다음 버튼 위 -->
+<div id="cheerArea"></div>
 <div class="test-nav">
 <button class="bp" onclick="prevQ()">이전</button>
 <button class="btn bn" id="btnN" onclick="nextQ()">다음</button>
@@ -585,7 +583,7 @@ function showCheer(qNum){
   if(phase!=='detail') return;
 
   const msg = CHEER_MAP[qNum];
-  const qnEl = document.getElementById('qnum');
+  const area = document.getElementById('cheerArea');
 
   // 메시지가 없으면 기존 팝업 그대로 유지 (아무것도 안 함)
   if(!msg) return;
@@ -609,17 +607,15 @@ function showCheer(qNum){
 
   // cheer-enter 애니메이션 끝나면 bubble 단독으로 전환
   el.addEventListener('animationend', function handler(e){
-    // cheerIn이 끝났을 때만 처리
     if(e.animationName === 'cheerIn'){
       el.removeEventListener('animationend', handler);
       el.classList.remove('cheer-enter');
-      // bubble만 남기기
       el.style.animation = 'bubble 2s ease-in-out infinite';
     }
   });
 
   wrap.appendChild(el);
-  qnEl.appendChild(wrap);
+  area.appendChild(wrap);
 }
 
 function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
@@ -654,32 +650,13 @@ function syncDots(){
 }
 
 function renderQ(){
-  const qnEl = document.getElementById('qnum');
-
-  // 숫자 텍스트 노드만 갱신 (cheerPop DOM은 건드리지 않음)
-  const numText = String(curQ+1).padStart(2,'0');
-  // qnum 안의 첫 텍스트 노드 찾기
-  let textNode = null;
-  for(let n of qnEl.childNodes){
-    if(n.nodeType === 3){ textNode = n; break; }
-  }
-  if(textNode){
-    textNode.textContent = numText;
-  } else {
-    // 텍스트 노드가 없으면 맨 앞에 삽입
-    qnEl.insertBefore(document.createTextNode(numText), qnEl.firstChild);
-  }
-
+  document.getElementById('qnum').textContent = String(curQ+1).padStart(2,'0');
   document.getElementById('qtxt').textContent=curQs[curQ].text;
   document.getElementById('cnt').textContent=`${curQ+1} / ${curQs.length}`;
   document.getElementById('pbar').style.width=((curQ+1)/curQs.length*100)+'%';
   document.getElementById('btnN').textContent=curQ===curQs.length-1?(phase==='screening'?'다음 단계':'결과 보기'):'다음';
   syncDots();
-
-  // q-card 애니메이션 (팝업과 무관)
   const c=document.getElementById('qcard');c.style.animation='none';c.offsetHeight;c.style.animation='';
-
-  // 팝업: 새 메시지가 있을 때만 업데이트
   showCheer(curQ+1);
 }
 
