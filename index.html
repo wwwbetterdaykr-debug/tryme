@@ -203,7 +203,7 @@ body{font-family:var(--sans);background:var(--white);color:var(--black);line-hei
 </div>
 <div class="gl-list" id="glList"></div>
 <div class="gl-back-wrap">
-<button class="btn" onclick="go('setup')">테스트 시작하기</button>
+<button class="btn" id="glStartBtn" onclick="go('setup')">테스트 시작하기</button>
 <button class="btn-g" onclick="go(glFrom)" style="margin-top:4px">← 돌아가기</button>
 </div>
 </div>
@@ -369,10 +369,10 @@ function openGlossary(from){
   const btn=document.getElementById('glStartBtn');
   if(glFrom==='midresult'){
     btn.textContent='상세 테스트 시작하기 →';
-    btn.onclick=function(){startDet('all')};
+    btn.setAttribute('onclick',"startDet('all')");
   }else{
     btn.textContent='테스트 시작하기';
-    btn.onclick=function(){go('setup')};
+    btn.setAttribute('onclick',"go('setup')");
   }
 }
 function filterGl(f,el){glFilter=f;document.querySelectorAll('.gl-tab').forEach(t=>t.classList.remove('on'));el.classList.add('on');renderGl()}
