@@ -362,7 +362,19 @@ VA:{n:'바닐라',e:'🍦',t:'neutral',s:'일반적이고 부드러운 관계를
 
 /* ═══ GLOSSARY ═══ */
 let glFilter='all',glFrom='intro';
-function openGlossary(from){glFrom=from||'intro';renderGl();go('glossary')}
+function openGlossary(from){
+  glFrom=from||'intro';
+  renderGl();
+  go('glossary');
+  const btn=document.getElementById('glStartBtn');
+  if(glFrom==='midresult'){
+    btn.textContent='상세 테스트 시작하기 →';
+    btn.onclick=function(){startDet('all')};
+  }else{
+    btn.textContent='테스트 시작하기';
+    btn.onclick=function(){go('setup')};
+  }
+}
 function filterGl(f,el){glFilter=f;document.querySelectorAll('.gl-tab').forEach(t=>t.classList.remove('on'));el.classList.add('on');renderGl()}
 function renderGl(){
   const list=document.getElementById('glList');let h='';
