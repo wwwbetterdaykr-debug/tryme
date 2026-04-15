@@ -738,7 +738,8 @@ function closeM(){document.getElementById('modal').classList.remove('on');docume
 function shareR(){
   gtag('event','BDSM_결과_공유',{event_category:'engagement'});
   const p=window._pcts,sorted=Object.entries(p).filter(([,v])=>v!==null).sort((a,b)=>b[1]-a[1]);
-  let t='📋 나의 성향 테스트 결과\n\n';
+  let t='📋 나의 성향 테스트 결과\n';
+  t+='※ 본 결과는 임상 진단이 아닌, 자기 이해를 돕기 위한 가이드입니다.\n\n';
   sorted.forEach(([k,v])=>{t+=`${C[k].e} ${C[k].n}: ${v>0?'+':''}${v}%\n`});
   Object.entries(p).filter(([,v])=>v===null).forEach(([k])=>{t+=`${C[k].e} ${C[k].n}: 미측정\n`});
   t+='\n────────────';
