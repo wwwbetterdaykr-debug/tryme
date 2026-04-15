@@ -180,16 +180,13 @@ body{font-family:var(--sans);background:var(--white);color:var(--black);line-hei
 .bubble{animation:bubble 2s ease-in-out infinite}
 
 /* ★ 응원 팝업 */
-@keyframes cheerIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
-@keyframes cheerOut{from{opacity:1}to{opacity:0}}
 .cheer-pop{
   display:inline-block;background:var(--gray-100);border:none;border-radius:10px;
   padding:6px 16px;font-size:13px;color:var(--gray-500);font-weight:500;
   letter-spacing:-.2px;pointer-events:none;
-  animation:cheerIn .3s ease-out forwards;
+  animation:bubble 2s ease-in-out infinite;
   margin-bottom:8px;
 }
-.cheer-pop.out{animation:cheerOut .3s ease-in forwards}
 </style>
 </head>
 <body>
