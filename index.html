@@ -554,13 +554,15 @@ const CHEER_MAP={
 function showCheer(qNum){
   if(phase!=='detail')return;
   const msg=CHEER_MAP[qNum];
-
-  /* 해당 문항에 메시지가 없으면 기존 팝업 제거 */
   const old=document.getElementById('cheerPop');
-  if(!msg){if(old)old.remove();return}
+
+  /* 해당 문항에 메시지가 없으면 기존 팝업 유지, 아무것도 안 함 */
+  if(!msg)return;
 
   /* 이미 같은 메시지가 떠 있으면 유지 */
   if(old&&old.textContent===msg)return;
+
+  /* 새 메시지가 있으면 기존 팝업 교체 */
   if(old)old.remove();
 
   const el=document.createElement('div');
@@ -573,6 +575,7 @@ function showCheer(qNum){
   const qn=document.getElementById('qnum');
   qn.parentNode.insertBefore(el,qn);
 }
+
 
 
 function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
