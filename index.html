@@ -620,7 +620,10 @@ function renderQ(){
   /* 팝업 정리는 showCheer 내부에서 처리 */
 
 
-  document.getElementById('qnum').textContent=String(curQ+1).padStart(2,'0');
+  const qnEl=document.getElementById('qnum');
+  const oldCheer=document.getElementById('cheerPop');
+  if(oldCheer)oldCheer.remove();
+  qnEl.textContent=String(curQ+1).padStart(2,'0');
   document.getElementById('qtxt').textContent=curQs[curQ].text;
   document.getElementById('cnt').textContent=`${curQ+1} / ${curQs.length}`;
   document.getElementById('pbar').style.width=((curQ+1)/curQs.length*100)+'%';
