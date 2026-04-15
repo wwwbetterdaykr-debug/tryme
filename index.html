@@ -74,12 +74,12 @@ body{font-family:var(--sans);background:var(--white);color:var(--black);line-hei
 .pbar{height:2px;background:var(--gray-200)}
 .pbar-f{height:100%;background:var(--black);transition:width .4s cubic-bezier(.4,0,.2,1)}
 /* ★ 고정 레이아웃: 숫자·응답버튼 위치 고정, 질문만 고정 높이 박스 안에서 처리 */
-.q-area{flex:1;display:flex;flex-direction:column;padding:32px 28px 0}
-.q-card{animation:qIn .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;flex-shrink:0}
+.q-area{flex:1;display:flex;flex-direction:column;justify-content:center;padding:32px 28px 0}
+.q-card{display:flex;flex-direction:column;flex-shrink:0}
 @keyframes qIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 .q-n{font-family:var(--serif);font-size:48px;font-weight:900;color:var(--gray-200);margin-bottom:12px;position:relative;flex-shrink:0}
 /* 질문 텍스트: 고정 높이 박스 — 질문이 길어도 응답버튼이 밀리지 않음 */
-.q-t-wrap{height:116px;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;display:flex;align-items:center;flex-shrink:0}
+.q-t-wrap{height:116px;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;display:flex;align-items:center;flex-shrink:0;animation:qIn .3s cubic-bezier(.4,0,.2,1)}
 .q-t-wrap::-webkit-scrollbar{display:none}
 .q-t{font-size:19px;font-weight:500;line-height:1.65;letter-spacing:-.2px;word-break:keep-all}
 .dots-w{padding:0 5px;margin-top:28px;flex-shrink:0}
@@ -661,7 +661,7 @@ function renderQ(){
   document.getElementById('pbar').style.width=((curQ+1)/curQs.length*100)+'%';
   document.getElementById('btnN').textContent=curQ===curQs.length-1?(phase==='screening'?'다음 단계':'결과 보기'):'다음';
   syncDots();
-  const c=document.getElementById('qcard');c.style.animation='none';c.offsetHeight;c.style.animation='';
+  const tw=document.querySelector('.q-t-wrap');tw.style.animation='none';tw.offsetHeight;tw.style.animation='';
   showCheer(curQ+1);
 }
 
