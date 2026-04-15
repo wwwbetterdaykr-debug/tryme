@@ -79,7 +79,7 @@ body{font-family:var(--sans);background:var(--white);color:var(--black);line-hei
 @keyframes qIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 .q-n{font-family:var(--serif);font-size:48px;font-weight:900;color:var(--gray-200);margin-bottom:6px;position:relative;flex-shrink:0}
 /* 질문 텍스트: 고정 높이 박스 — 질문이 길어도 응답버튼이 밀리지 않음 */
-.q-t-wrap{height:116px;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;display:flex;align-items:center;flex-shrink:0;animation:qIn .3s cubic-bezier(.4,0,.2,1)}
+.q-t-wrap{height:116px;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;display:flex;align-items:flex-start;flex-shrink:0;animation:qIn .3s cubic-bezier(.4,0,.2,1)}
 .q-t-wrap::-webkit-scrollbar{display:none}
 .q-t{font-size:19px;font-weight:500;line-height:1.65;letter-spacing:-.2px;word-break:keep-all}
 .dots-w{padding:0 5px;margin-top:28px;flex-shrink:0}
