@@ -722,9 +722,10 @@ function shareR(){
   sorted.forEach(([k,v])=>{t+=`${C[k].e} ${C[k].n}: ${v>0?'+':''}${v}%\n`});
   Object.entries(p).filter(([,v])=>v===null).forEach(([k])=>{t+=`${C[k].e} ${C[k].n}: 미측정\n`});
   t+='\n────────────';
-  t+='\n섹슈얼 웰니스 매거진 \'트라이미\'';
-  t+='\BDSM 테스트 해보기 →';
+  t+='\n트라이미 | BDSM 성향 테스트';
+  t+='\n나는 어떤 성향일까? 테스트해보기 →';
   t+='\nhttps://bdsm.tryme.im';
+
   if(navigator.share){
     navigator.share({title:'BDSM 성향 테스트 결과',text:t}).catch(()=>{});
   }else{
