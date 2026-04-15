@@ -629,10 +629,27 @@ function startDet(type){
 function computeScores(){
   raw={};Object.keys(C).forEach(k=>raw[k]=0);
   /* 스크리닝 map 문항 반영 */
-  QSCREEN.forEach((q,i)=>{if(q.type!=='map'||!q.map)return;const v=(screenAns[i]-50)/50;q.map.forEach(([c,w])=>{if(raw[c]!==undefined)raw[c]+=v*w})});
+  QSCREEN.forEach((q, i)=>{if(q.type!=='map'||! q.map) return;const v=(screenAns[i]-50)/50;q.map.forEach(([c,w])=>{if(raw[c]!==undefined)raw[c]+=v*w})});
   /* 상세 테스트 문항 반영 (크로스-기여 포함) */
   curQs.forEach((q,i)=>{const v=(ans[i]-50)/50;q.map.forEach(([c,w])=>{if(raw[c]!==undefined)raw[c]+=v*w})});
+
+  /* ━━━ 2차 후처리: SW/VA/DO/SU 합성 보정 ━━━ */
+  const domKeys=['MT','HU','BT','OW','DM','SA','SP','DG','RI','DO','BO'];
+  const subKeys=['SL','PR','BR','PE','LI','MA','SK','DE','RB','SU','SV'];
+  let dSum=0,sSum=0;
+  domKeys.forEach(k=>dSum+=Math.max(0,raw[k]));
+  subKeys.forEach(k=>sSum+=Math.max(0,raw[k]));
+  /* SW: 양쪽 다 높을수록 보너스 */
+  raw['SW']+=Math.min(dSum,sSum)*0.05;
+  /* VA: 전체 BDSM 강도가 높을수록 감소 */
+  const intensity=dSum+sSum;
+  raw['VA']+=Math.max(0,3-intensity*0.1);
+  /* DO: 하위 dom 성향의 가중 평균 반영 */
+  raw['DO']+=(dSum-raw['DO'])*0.03;
+  /* SU: 하위 sub 성향의 가중 평균 반영 */
+  raw['SU']+=(sSum-raw['SU'])*0.03;
 }
+
 
 function showLoad(){
   go('loading');
