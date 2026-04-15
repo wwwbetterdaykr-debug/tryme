@@ -96,6 +96,7 @@ body{font-family:var(--sans);background:var(--white);color:var(--black);line-hei
 .dot.on::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--white)}
 .dots-v{text-align:center;margin-top:16px;font-size:13px;color:var(--gray-500);font-weight:500;min-height:20px;flex-shrink:0}
 .test-nav{padding:16px 28px;padding-bottom:calc(16px + env(safe-area-inset-bottom));display:flex;gap:8px;background:var(--white);border-top:1px solid var(--gray-100)}
+.setup-nav{padding:16px 28px;padding-bottom:calc(16px + env(safe-area-inset-bottom));margin-top:auto;background:var(--white);border-top:1px solid var(--gray-100)}
 .test-nav .bp{flex:0 0 auto;padding:16px 18px;border:1px solid var(--gray-200);background:var(--white);font-size:14px;font-weight:500;font-family:var(--sans);cursor:pointer;color:var(--gray-600);transition:var(--tr)}
 .test-nav .bp:active{background:var(--gray-50)}
 .test-nav .bn{flex:1}
@@ -183,6 +184,8 @@ body{font-family:var(--sans);background:var(--white);color:var(--black);line-hei
 
 /* ★ 통통 튀는 애니메이션 (팝업 유지 시 계속 실행) */
 @keyframes bubble{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes cheerFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes cheerFadeOut{from{opacity:1}to{opacity:0}}
 
 /* ★ 응원 팝업 슬롯: 숫자와 질문 사이 고정 높이 — 팝업 유무와 무관하게 레이아웃 고정 */
 .cheer-slot{
@@ -207,14 +210,13 @@ body{font-family:var(--sans);background:var(--white);color:var(--black);line-hei
   font-weight:500;
   letter-spacing:-.2px;
   white-space:nowrap;
-  animation:bubble 2s ease-in-out infinite;
+  opacity:0;
 }
-.cheer-pop.cheer-enter{
-  animation:cheerIn .25s cubic-bezier(.4,0,.2,1) forwards, bubble 2s ease-in-out .25s infinite;
+.cheer-pop.cheer-in{
+  animation:cheerFadeIn .4s ease forwards, bubble 2s ease-in-out .4s infinite;
 }
-@keyframes cheerIn{
-  from{opacity:0;transform:translateY(-4px)}
-  to{opacity:1;transform:translateY(0)}
+.cheer-pop.cheer-out{
+  animation:cheerFadeOut .3s ease forwards;
 }
 </style>
 </head>
@@ -267,7 +269,6 @@ body{font-family:var(--sans);background:var(--white);color:var(--black);line-hei
 
 <div id="setup" class="screen">
 <div style="padding-top:40px;margin-bottom:60px;">
-<div class="s-label">STEP 0</div>
 <h2 class="s-title">기본 정보를<br>알려주세요</h2>
 </div>
 <div class="field"><div class="field-l">성별</div>
@@ -282,7 +283,7 @@ body{font-family:var(--sans);background:var(--white);color:var(--black);line-hei
 <div class="chips" data-f="orient">
 <div class="chip" data-v="hetero">이성애</div><div class="chip" data-v="homo">동성애</div><div class="chip" data-v="bi">양성애</div><div class="chip" data-v="other">기타</div>
 </div></div>
-<div class="btn-wrap"><button class="btn" id="btnSetup" disabled onclick="startScreening()">다음으로</button></div>
+<div class="setup-nav"><button class="btn" id="btnSetup" disabled onclick="startScreening()">다음으로</button></div>
 </div>
 
 <div id="test" class="screen">
@@ -590,37 +591,58 @@ function showCheer(qNum){
   const msg = CHEER_MAP[qNum];
   const area = document.getElementById('cheerArea');
 
-  // 메시지가 없으면 기존 팝업 그대로 유지 (아무것도 안 함)
+  // 메시지가 없으면 기존 팝업 그대로 유지
   if(!msg) return;
 
-  // 이미 같은 메시지가 표시 중이면 건드리지 않음 (애니메이션 유지)
+  // 이미 같은 메시지면 아무것도 안 함
   if(_currentCheerMsg === msg) return;
-
-  // 새 메시지 → 기존 팝업 제거 후 새로 생성
-  const old = document.getElementById('cheerPop');
-  if(old) old.remove();
 
   _currentCheerMsg = msg;
 
-  const wrap = document.createElement('div');
-  wrap.id = 'cheerPop';
-  wrap.className = 'cheer-wrap';
+  const old = document.getElementById('cheerPop');
 
-  const el = document.createElement('div');
-  el.className = 'cheer-pop cheer-enter';
-  el.textContent = msg;
+  function createNew(){
+    // 기존 완전 제거
+    const prev = document.getElementById('cheerPop');
+    if(prev) prev.remove();
 
-  // cheer-enter 애니메이션 끝나면 bubble 단독으로 전환
-  el.addEventListener('animationend', function handler(e){
-    if(e.animationName === 'cheerIn'){
-      el.removeEventListener('animationend', handler);
-      el.classList.remove('cheer-enter');
-      el.style.animation = 'bubble 2s ease-in-out infinite';
+    const wrap = document.createElement('div');
+    wrap.id = 'cheerPop';
+    wrap.className = 'cheer-wrap';
+
+    const el = document.createElement('div');
+    el.className = 'cheer-pop cheer-in';
+    el.textContent = msg;
+
+    // fadeIn 끝나면 bubble 단독으로 전환
+    el.addEventListener('animationend', function handler(e){
+      if(e.animationName === 'cheerFadeIn'){
+        el.removeEventListener('animationend', handler);
+        el.style.animation = 'bubble 2s ease-in-out infinite';
+        el.style.opacity = '1';
+      }
+    });
+
+    wrap.appendChild(el);
+    area.appendChild(wrap);
+  }
+
+  if(old){
+    const oldEl = old.querySelector('.cheer-pop');
+    if(oldEl){
+      // 기존 팝업 페이드아웃 후 새 팝업 생성
+      oldEl.className = 'cheer-pop cheer-out';
+      oldEl.style.animation = '';
+      oldEl.addEventListener('animationend', function handler(){
+        oldEl.removeEventListener('animationend', handler);
+        createNew();
+      }, {once:true});
+    } else {
+      createNew();
     }
-  });
-
-  wrap.appendChild(el);
-  area.appendChild(wrap);
+  } else {
+    createNew();
+  }
 }
 
 function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
