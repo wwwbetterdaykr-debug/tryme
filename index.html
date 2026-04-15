@@ -723,8 +723,8 @@ function shareR(){
   Object.entries(p).filter(([,v])=>v===null).forEach(([k])=>{t+=`${C[k].e} ${C[k].n}: 미측정\n`});
   t+='\n────────────';
   t+='\n섹슈얼 웰니스 매거진 \'트라이미\'';
-  t+='\n지금 첫 달 무료로 구독하기 →';
-  t+='\nhttps://tryme.im';
+  t+='\BDSM 테스트 해보기 →';
+  t+='\nhttps://bdsm.tryme.im';
   if(navigator.share){
     navigator.share({title:'BDSM 성향 테스트 결과',text:t}).catch(()=>{});
   }else{
