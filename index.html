@@ -620,8 +620,15 @@ function syncDots(){
 
 function renderQ(){
   const qnEl=document.getElementById('qnum');
-  // ← oldCheer.remove() 삭제함
-  qnEl.textContent=String(curQ+1).padStart(2,'0');
+
+  // 텍스트 노드만 교체 (cheerPop 유지)
+  const numText = String(curQ+1).padStart(2,'0');
+  if(qnEl.firstChild && qnEl.firstChild.nodeType===3){
+    qnEl.firstChild.textContent = numText;
+  } else {
+    qnEl.insertBefore(document.createTextNode(numText), qnEl.firstChild);
+  }
+
   document.getElementById('qtxt').textContent=curQs[curQ].text;
   document.getElementById('cnt').textContent=`${curQ+1} / ${curQs.length}`;
   document.getElementById('pbar').style.width=((curQ+1)/curQs.length*100)+'%';
@@ -632,9 +639,6 @@ function renderQ(){
 }
 
 
-  /* ★ 응원 팝업 체크 — 문항 번호(1-based) */
-  showCheer(curQ+1);
-}
 function nextQ(){
   if(!picked.has(phase+'_'+curQ))return;
   if(curQ<curQs.length-1){curQ++;renderQ()}else finishPhase();
