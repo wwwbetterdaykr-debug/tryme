@@ -96,7 +96,13 @@ body{font-family:var(--sans);background:var(--white);color:var(--black);line-hei
 .dot.on::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--white)}
 .dots-v{text-align:center;margin-top:16px;font-size:13px;color:var(--gray-500);font-weight:500;min-height:20px;flex-shrink:0}
 .test-nav{padding:16px 28px;padding-bottom:calc(16px + env(safe-area-inset-bottom));display:flex;gap:8px;background:var(--white);border-top:1px solid var(--gray-100)}
-.setup-nav{padding:16px 28px;padding-bottom:calc(16px + env(safe-area-inset-bottom));margin-top:auto;background:var(--white);border-top:1px solid var(--gray-100)}
+.setup-nav {
+  margin: auto -28px 0; /* 좌우 마이너스 여백으로 박스 자체를 화면 끝까지 늘림 */
+  padding: 16px 28px; /* 안쪽 버튼은 위의 텍스트와 동일하게 28px 위치에 정렬 */
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  background: var(--white);
+  border-top: 1px solid var(--gray-100);
+}
 .test-nav .bp{flex:0 0 auto;padding:16px 18px;border:1px solid var(--gray-200);background:var(--white);font-size:14px;font-weight:500;font-family:var(--sans);cursor:pointer;color:var(--gray-600);transition:var(--tr)}
 .test-nav .bp:active{background:var(--gray-50)}
 .test-nav .bn{flex:1}
