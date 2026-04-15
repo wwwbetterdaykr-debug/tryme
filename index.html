@@ -181,8 +181,9 @@ body{font-family:var(--sans);background:var(--white);color:var(--black);line-hei
 
 /* ★ 응원 팝업 */
 .cheer-wrap{
-  position:absolute;top:-32px;left:0;width:100%;text-align:center;
+  text-align:center;
   pointer-events:none;
+  margin-bottom:0px;
 }
 .cheer-pop{
   display:inline-block;background:var(--gray-100);border:none;border-radius:10px;
@@ -579,7 +580,7 @@ function showCheer(qNum){
   el.textContent=msg;
 
   wrap.appendChild(el);
-  document.getElementById('qnum').appendChild(wrap);
+  document.getElementById('qcard').parentNode.insertBefore(wrap, document.getElementById('qcard'));
 }
 
 
