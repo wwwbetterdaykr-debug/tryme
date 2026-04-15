@@ -183,7 +183,10 @@ body{font-family:var(--sans);background:var(--white);color:var(--black);line-hei
 .cheer-wrap{
   text-align:center;
   pointer-events:none;
-  margin-bottom:0px;
+  position:absolute;
+  top:-28px;
+  left:0;
+  width:100%;
 }
 .cheer-pop{
   display:inline-block;background:var(--gray-100);border:none;border-radius:10px;
@@ -560,17 +563,14 @@ function showCheer(qNum){
   const msg=CHEER_MAP[qNum];
   const old=document.getElementById('cheerPop');
 
-  /* 메시지가 없으면 기존 팝업 유지 */
-  if(!msg)return;
+  if(!msg) return;          // 메시지 없으면 기존 팝업 유지
 
-  /* 이미 같은 메시지면 유지 */
   if(old){
     const inner=old.querySelector('.cheer-pop');
-    if(inner&&inner.textContent===msg)return;
+    if(inner&&inner.textContent===msg) return;  // 같은 메시지면 유지
     old.remove();
   }
 
-  /* 새 팝업 생성: wrap(absolute) > el(inline-block) */
   const wrap=document.createElement('div');
   wrap.id='cheerPop';
   wrap.className='cheer-wrap';
@@ -580,8 +580,9 @@ function showCheer(qNum){
   el.textContent=msg;
 
   wrap.appendChild(el);
-  document.getElementById('qcard').parentNode.insertBefore(wrap, document.getElementById('qcard'));
+  document.getElementById('qnum').appendChild(wrap);  // ← qnum 안에 삽입
 }
+
 
 
 
@@ -618,12 +619,8 @@ function syncDots(){
 }
 
 function renderQ(){
-  /* 팝업 정리는 showCheer 내부에서 처리 */
-
-
   const qnEl=document.getElementById('qnum');
-  const oldCheer=document.getElementById('cheerPop');
-  if(oldCheer)oldCheer.remove();
+  // ← oldCheer.remove() 삭제함
   qnEl.textContent=String(curQ+1).padStart(2,'0');
   document.getElementById('qtxt').textContent=curQs[curQ].text;
   document.getElementById('cnt').textContent=`${curQ+1} / ${curQs.length}`;
@@ -631,6 +628,9 @@ function renderQ(){
   document.getElementById('btnN').textContent=curQ===curQs.length-1?(phase==='screening'?'다음 단계':'결과 보기'):'다음';
   syncDots();
   const c=document.getElementById('qcard');c.style.animation='none';c.offsetHeight;c.style.animation='';
+  showCheer(curQ+1);
+}
+
 
   /* ★ 응원 팝업 체크 — 문항 번호(1-based) */
   showCheer(curQ+1);
