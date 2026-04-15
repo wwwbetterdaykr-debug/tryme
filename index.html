@@ -74,7 +74,7 @@ body{font-family:var(--sans);background:var(--white);color:var(--black);line-hei
 .pbar{height:2px;background:var(--gray-200)}
 .pbar-f{height:100%;background:var(--black);transition:width .4s cubic-bezier(.4,0,.2,1)}
 /* ★ 고정 레이아웃: 숫자·응답버튼 위치 고정, 질문만 고정 높이 박스 안에서 처리 */
-.q-area{flex:1;display:flex;flex-direction:column;justify-content:center;padding:40px 28px 20px}
+.q-area{flex:1;display:flex;flex-direction:column;padding:32px 28px 0}
 .q-card{animation:qIn .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;flex-shrink:0}
 @keyframes qIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 .q-n{font-family:var(--serif);font-size:48px;font-weight:900;color:var(--gray-200);margin-bottom:12px;position:relative;flex-shrink:0}
@@ -184,39 +184,36 @@ body{font-family:var(--sans);background:var(--white);color:var(--black);line-hei
 /* ★ 통통 튀는 애니메이션 (팝업 유지 시 계속 실행) */
 @keyframes bubble{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 
-/* ★ 응원 팝업 — dots-v 아래, test-nav 위 공간에 고정 */
-#cheerArea {
-  min-height: 40px;
-  flex-shrink: 0;
+/* ★ 응원 팝업 슬롯: 숫자와 질문 사이 고정 높이 — 팝업 유무와 무관하게 레이아웃 고정 */
+.cheer-slot{
+  height:28px;
+  display:flex;
+  align-items:center;
+  flex-shrink:0;
+  margin-bottom:10px;
 }
-  
 .cheer-wrap{
   width:100%;
-  text-align:center;
   pointer-events:none;
-  padding:12px 28px 4px;
 }
 .cheer-pop{
   display:inline-block;
   background:var(--gray-100);
-  border-radius:10px;
-  padding:6px 16px;
-  /* ★ 산세리프(고딕) 폰트 적용 */
+  border-radius:8px;
+  padding:4px 12px;
   font-family:var(--sans);
   font-size:12px;
   color:var(--gray-500);
   font-weight:500;
   letter-spacing:-.2px;
   white-space:nowrap;
-  /* ★ 통통 튀는 애니메이션만 적용, 계속 유지 */
   animation:bubble 2s ease-in-out infinite;
 }
-/* ★ 팝업이 새로 생길 때만 fade-in (질문 전환 리프레시 없음) */
 .cheer-pop.cheer-enter{
   animation:cheerIn .25s cubic-bezier(.4,0,.2,1) forwards, bubble 2s ease-in-out .25s infinite;
 }
 @keyframes cheerIn{
-  from{opacity:0;transform:translateY(-6px)}
+  from{opacity:0;transform:translateY(-4px)}
   to{opacity:1;transform:translateY(0)}
 }
 </style>
@@ -296,6 +293,7 @@ body{font-family:var(--sans);background:var(--white);color:var(--black);line-hei
 <div class="q-area">
 <div class="q-card" id="qcard">
 <div class="q-n" id="qnum"></div>
+<div class="cheer-slot" id="cheerArea"></div>
 <div class="q-t-wrap"><p class="q-t" id="qtxt"></p></div>
 </div>
 <div class="dots-w">
@@ -312,8 +310,6 @@ body{font-family:var(--sans);background:var(--white);color:var(--black);line-hei
 <div class="dots-v" id="dotVal"></div>
 </div>
 </div>
-<!-- ★ 응원 팝업 삽입 위치: 원형 버튼 아래, 이전/다음 버튼 위 -->
-<div id="cheerArea"></div>
 <div class="test-nav">
 <button class="bp" onclick="prevQ()">이전</button>
 <button class="btn bn" id="btnN" onclick="nextQ()">다음</button>
