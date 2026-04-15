@@ -551,21 +551,18 @@ const CHEER_MAP={
   90:'마지막 10개! 이 답변들이 최종 순위를 뒤집을 수도 있어요',
   97:'3개만 더 답하면 당신의 성향이 공개돼요'
 };
-let cheerShown=new Set();
-let cheerTimer=null;
-
 function showCheer(qNum){
-  /* detail 페이스만 대상, 이미 표시한 번호는 스킵 */
   if(phase!=='detail')return;
   const msg=CHEER_MAP[qNum];
-  if(!msg||cheerShown.has(qNum))return;
-  cheerShown.add(qNum);
 
-  /* 기존 팝업 즉시 제거 */
+  /* 해당 문항에 메시지가 없으면 기존 팝업 제거 */
   const old=document.getElementById('cheerPop');
-  if(old){clearTimeout(cheerTimer);old.remove()}
+  if(!msg){if(old)old.remove();return}
 
-  /* 새 팝업 생성 */
+  /* 이미 같은 메시지가 떠 있으면 유지 */
+  if(old&&old.textContent===msg)return;
+  if(old)old.remove();
+
   const el=document.createElement('div');
   el.id='cheerPop';
   el.className='cheer-pop';
@@ -573,16 +570,10 @@ function showCheer(qNum){
   el.style.display='block';
   el.style.textAlign='center';
 
-  /* q-n(질문번호) 바로 위에 삽입 */
   const qn=document.getElementById('qnum');
   qn.parentNode.insertBefore(el,qn);
-
-  /* 2.7초 후 fade-out → 0.3초 후 제거 (총 3초) */
-  cheerTimer=setTimeout(()=>{
-    el.classList.add('out');
-    setTimeout(()=>{if(el.parentNode)el.remove()},300);
-  },2700);
 }
+
 
 function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
 
@@ -616,9 +607,8 @@ function syncDots(){
 }
 
 function renderQ(){
-  /* ★ 기존 팝업 정리 */
-  const old=document.getElementById('cheerPop');
-  if(old){clearTimeout(cheerTimer);old.remove()}
+  /* 팝업 정리는 showCheer 내부에서 처리 */
+
 
   document.getElementById('qnum').textContent=String(curQ+1).padStart(2,'0');
   document.getElementById('qtxt').textContent=curQs[curQ].text;
@@ -677,7 +667,6 @@ function startDet(type){
   window._dt=type;phase='detail';curQ=0;
   if(type==='dom')curQs=QD;else if(type==='sub')curQs=QS;else curQs=QA;
   ans=Array(curQs.length).fill(50);picked=new Set();
-  cheerShown=new Set(); /* ★ 응원 팝업 표시 이력 초기화 */
   go('test');renderQ();
 }
 
