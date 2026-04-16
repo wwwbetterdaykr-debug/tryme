@@ -584,7 +584,11 @@ function renderQ(){
   const tw=document.querySelector('.q-t-wrap');tw.style.animation='none';tw.offsetHeight;tw.style.animation='';
   showCheer(curQ+1);
 }
-function nextQ(){if(!picked.has(phase+'_'+curQ))return;if(curQ<curQs.length-1){curQ++;renderQ()}else finishPhase();}
+function nextQ(){
+  if(!picked.has(phase+'_'+curQ))return;
+  if(curQ<curQs.length-1){curQ++;renderQ();}
+  else finishPhase();
+}
 function prevQ(){if(curQ>0){curQ--;renderQ()}else if(phase==='screening'){go('setup')}}
 
 function startScreening(){
