@@ -723,7 +723,8 @@ function pick(i){
   ans[curQ]=DV[i];picked.add(phase+'_'+curQ);
   document.querySelectorAll('#dotsRow .dot').forEach((d,j)=>d.classList.toggle('on',j===i));
   document.getElementById('dotVal').textContent=DL[i];
-  setTimeout(()=>{nextQ()},300);
+  const isLast = curQ === curQs.length - 1;
+  if(!isLast) setTimeout(()=>{nextQ()},300);  // 마지막 질문이면 자동 이동 안 함
 }
 function syncDots(){
   const key=phase+'_'+curQ;let ci=-1;
