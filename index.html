@@ -579,7 +579,7 @@ function renderQ(){
   document.getElementById('qtxt').textContent=curQs[curQ].text;
   document.getElementById('cnt').textContent=`${curQ+1} / ${curQs.length}`;
   document.getElementById('pbar').style.width=((curQ+1)/curQs.length*100)+'%';
-  document.getElementById('btnN').textContent=curQ===curQs.length-1?'결과 보기':'다음';
+  document.getElementById('btnN').textContent=curQ===curQs.length-1?(phase==='screening'?'1차 결과 보기':'결과 보기'):'다음';
   syncDots();
   const tw=document.querySelector('.q-t-wrap');tw.style.animation='none';tw.offsetHeight;tw.style.animation='';
   showCheer(curQ+1);
